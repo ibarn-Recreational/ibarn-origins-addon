@@ -202,8 +202,8 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
     @Inject(method = "clearStatusEffects", at = @At("HEAD"))
     public void livingEntity$clearStatusEffects_HEAD(CallbackInfoReturnable<Boolean> cir) {
         LivingEntity thisEntity = (LivingEntity) (Object) this;
-        if(this.activeStatusEffects.containsKey(IOEffects.SOUL_FIRE) && (!this.isSoulMage() && !(thisEntity instanceof PlayerEntity player && player.isCreative()))) {
-            this.soulBurning = this.activeStatusEffects.get(IOEffects.SOUL_FIRE);
+        if(this.activeStatusEffects.containsKey(IOEffects.SOUL_FIRE.get()) && (!this.isSoulMage() && !(thisEntity instanceof PlayerEntity player && player.isCreative()))) {
+            this.soulBurning = this.activeStatusEffects.get(IOEffects.SOUL_FIRE.get());
         }
     }
 
