@@ -1,0 +1,17 @@
+{
+	"powers": [
+		"origins:fire_immunity",
+		"origins:fall_immunity",
+		"origins:slow_falling",
+		"ibarnorigins:ghasterfireball",
+		"ibarnorigins:ghasterfireball_sfx",
+		"ibarnorigins:ghasterexhaust",
+		"origins:fragile",
+		"ibarnorigins:ghasterappearance"
+	],
+	"icon": "minecraft:ghast_tear",
+	"order": 4,
+	"impact": 2,
+	"name": "Ghaster",
+	"description": "Far descendants of the Ghasts who were rescued from the Nether and who became more human due to their prolonged exposure to the Overworld."
+}

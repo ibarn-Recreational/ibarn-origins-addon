@@ -1,0 +1,59 @@
+{
+	"type": "origins:multiple",
+	"veggie_experience": {
+		"type": "origins:action_on_item_use",
+		"entity_action": {
+			"type": "origins:spawn_entity",
+			"entity_type": "minecraft:experience_orb",
+			"tag": "{Value:5}"
+		},
+		"item_condition": {
+			"type": "origins:meat",
+			"inverted": true
+		}
+	},
+	"meat_saturation_modifier": {
+		"type": "origins:modify_food",
+		"item_condition": {
+			"type": "origins:and",
+			"conditions": [
+			  {
+				"type": "origins:or",
+				"conditions": [
+				  {
+					"type": "origins:ingredient",
+					"ingredient": {
+					  "tag": "origins:meat"
+					}
+				  },
+				  {
+					"type": "origins:meat"
+				  }
+				]
+			  },
+			  {
+				"type": "origins:food"
+			  },
+			  {
+				"type": "origins:ingredient",
+				"ingredient": {
+				  "tag": "origins:ignore_diet"
+				},
+				"inverted": true
+			  }
+			]
+		},
+		"food_modifier": {
+			"name": "Halved food points",
+			"operation": "multiply_base",
+			"value": -0.5
+		},
+		"saturation_modifier": {
+			"name": "Halved saturation points",
+			"operation": "multiply_base",
+			"value": -0.5
+		}
+	},
+	"name": "Preferred Vegetarian",
+	"description": "Meat does not have as much soul energy as vegetables do. Hereby meat does not sustain for much but vegetables grant you a small amount of experience upon consumption."
+}

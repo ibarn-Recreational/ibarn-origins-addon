@@ -1,0 +1,36 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+#issueTrackerURL = ""
+license = "MIT"
+
+[[mods]]
+modId = "ibarnorigins"
+version = "${version}"
+displayName = "ibarn's origins addon"
+authors = "ibarnstormer"
+description = '''
+This addon adds in some new origins.
+'''
+#logoFile = ""
+
+[[dependencies.ibarnorigins]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.ibarnorigins]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+#Add only if needed
+#[[dependencies.ibarnorigins]]
+#modId = "architectury"
+#mandatory = true
+#versionRange = "[9.1.12,)"
+#ordering = "AFTER"
+#side = "BOTH"

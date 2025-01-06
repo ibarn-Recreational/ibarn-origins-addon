@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "ibarnorigins",
+  "version": "${version}",
+  "name": "ibarn's origins addon",
+  "description": "This addon adds in some new origins.",
+  "authors": [
+    "ibarnstormer"
+  ],
+  "contact": {
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ibarnstormer.ibarnorigins.fabric.IbarnOriginsFabric"
+    ],
+    "client": [
+      "com.ibarnstormer.ibarnorigins.fabric.IbarnOriginsFabricClient"
+    ]
+  },
+  "mixins": [
+    "ibarnorigins.mixins.json",
+    "ibarnorigins-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.20.1"
+  }
+}

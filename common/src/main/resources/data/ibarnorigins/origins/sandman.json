@@ -1,0 +1,13 @@
+{
+	"powers": [
+		"ibarnorigins:sandman_init",
+		"ibarnorigins:sandman_attributes",
+		"ibarnorigins:sandman_sandbury",
+		"ibarnorigins:sandman_shovel_damage"
+	],
+	"icon": "minecraft:sand",
+	"order": 2,
+	"impact": 2,
+	"name": "Sand Person",
+	"description": "The Sand People are the people of the sand who live in the sand."
+}

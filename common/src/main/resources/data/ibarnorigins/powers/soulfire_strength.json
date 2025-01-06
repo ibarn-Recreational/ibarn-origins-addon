@@ -1,0 +1,127 @@
+{
+	"type": "origins:multiple",
+	"strength": {
+		"type": "origins:stacking_status_effect",
+		"min_stacks": 0,
+		"max_stacks": 1,
+		"duration_per_stack": 20,
+		"effect": {
+			"effect": "ibarnorigins:soul_fire_strength_effect",
+			"is_ambient": true,
+			"amplifier": 0,
+			"show_particles": false,
+			"show_icon": false
+		},
+		"condition": {
+			"type": "origins:or",
+			"conditions": [
+				{
+					"type": "origins:block_in_radius",
+					"radius": 5,
+					"block_condition": {
+						"type": "origins:or",
+						"conditions": [
+							{
+								"type": "origins:in_tag",
+								"tag": "ibarnorigins:soul_fire_no_campfire"
+							},
+							{
+								"type": "origins:and",
+								"conditions": [
+									{
+										"type": "origins:block",
+										"block": "minecraft:soul_campfire"
+									},
+									{
+										"type": "origins:block_state",
+										"property": "lit",
+										"value": "true"
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"type": "origins:equipped_item",
+					"equipment_slot": "mainhand",
+					"item_condition": {
+						"type": "origins:ingredient",
+						"ingredient": {
+							"tag": "minecraft:piglin_repellents"
+						}
+					}
+				},
+				{
+					"type": "origins:equipped_item",
+					"equipment_slot": "offhand",
+					"item_condition": {
+						"type": "origins:ingredient",
+						"ingredient": {
+							"tag": "minecraft:piglin_repellents"
+						}
+					}
+				}
+			]
+		}
+	},
+	"visual": {
+		"type": "origins:particle",
+		"particle": "minecraft:soul_fire_flame",
+		"frequency": 4,
+		"condition": {
+			"type": "origins:or",
+			"conditions": [
+				{
+					"type": "origins:block_in_radius",
+					"radius": 5,
+					"block_condition": {
+						"type": "origins:or",
+						"conditions": [
+							{
+								"type": "origins:in_tag",
+								"tag": "ibarnorigins:soul_fire_no_campfire"
+							},
+							{
+								"type": "origins:and",
+								"conditions": [
+									{
+										"type": "origins:block",
+										"block": "minecraft:soul_campfire"
+									},
+									{
+										"type": "origins:block_state",
+										"property": "lit",
+										"value": "true"
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"type": "origins:equipped_item",
+					"equipment_slot": "mainhand",
+					"item_condition": {
+						"type": "origins:ingredient",
+						"ingredient": {
+							"tag": "minecraft:piglin_repellents"
+						}
+					}
+				},
+				{
+					"type": "origins:equipped_item",
+					"equipment_slot": "offhand",
+					"item_condition": {
+						"type": "origins:ingredient",
+						"ingredient": {
+							"tag": "minecraft:piglin_repellents"
+						}
+					}
+				}
+			]
+		}
+	},
+	"name": "Soul Fire Strength",
+	"description": "Deal an additional 50% amount of damage while standing near soul fire sources or holding their respective items. Moreover, standing directly inside soul fire will boost melee attacks to 100% additional damage and 50% additional soul fire ball damage."
+}

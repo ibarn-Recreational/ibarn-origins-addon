@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "com.ibarnstormer.ibarnorigins.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+    "AbstractFireBlockMixin",
+    "CampfireBlockMixin",
+    "LivingEntityMixin",
+    "ServerPlayerEntityMixin"
+  ],
+  "client": [
+    "BipedEntityModelMixin",
+    "EntityRendererDispatcherMixin",
+    "InGameOverlayRendererMixin",
+    "LivingEntityRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

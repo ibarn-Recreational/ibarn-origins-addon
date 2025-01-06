@@ -1,0 +1,23 @@
+{
+  "type": "origins:multiple",
+  "max_health": {
+    "type": "origins:attribute",
+    "modifier": {
+      "name": "Less Health",
+      "attribute": "minecraft:generic.max_health",
+      "operation": "addition",
+      "value": -10
+    }
+  },
+  "max_damage_output": {
+    "type": "origins:attribute",
+    "modifier": {
+      "name": "Less Attack Power",
+      "attribute": "minecraft:generic.attack_damage",
+      "operation": "multiply_base",
+      "value": -0.5
+    }
+  },
+  "name": "Frailty",
+  "description": "Due to your amalgamation, your body became very frail (5 hearts) and you aren't able to dish out much raw melee damage."
+}

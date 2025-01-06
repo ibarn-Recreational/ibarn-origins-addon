@@ -1,0 +1,96 @@
+{
+"type": "origins:multiple",
+"decreased_melee_damage": {
+	"type": "origins:stacking_status_effect",
+	"min_stacks": 0,
+	"max_stacks": 1,
+	"duration_per_stack": 20,
+	"effect": {
+		"effect": "ibarnorigins:fire_weakness_effect",
+		"is_ambient": true,
+		"amplifier": 0,
+		"show_particles": false,
+		"show_icon": false
+	},
+	"condition": {
+		"type": "origins:block_in_radius",
+		"radius": 5,
+		"block_condition": {
+			"type": "origins:or",
+			"conditions": [
+				{
+					"type": "origins:in_tag",
+					"tag": "ibarnorigins:fire"
+				},
+				{
+					"type": "origins:and",
+					"conditions": [
+						{
+							"type": "origins:block",
+							"block": "minecraft:campfire"
+						},
+						{
+							"type": "origins:block_state",
+							"property": "lit",
+							"value": "true"
+						}
+					]
+				}
+			]
+		}
+	}
+},
+"mining_fatigue": {
+	"type": "origins:stacking_status_effect",
+	"min_stacks": 0,
+	"max_stacks": 1,
+	"duration_per_stack": 20,
+	"effect": {
+		"effect": "minecraft:mining_fatigue",
+        "is_ambient": true,
+		"amplifier": 1,
+        "show_particles": false,
+        "show_icon": true
+	},
+	"condition": {
+		"type": "origins:block_in_radius",
+		"radius": 5,
+		"block_condition": {
+			"type": "origins:or",
+			"conditions": [
+				{
+					"type": "origins:in_tag",
+					"tag": "ibarnorigins:fire"
+				},
+				{
+					"type": "origins:and",
+					"conditions": [
+						{
+							"type": "origins:block",
+							"block": "minecraft:campfire"
+						},
+						{
+							"type": "origins:block_state",
+							"property": "lit",
+							"value": "true"
+						}
+					]
+				}
+			]
+		}
+	}
+},
+"extra_fire_damage": {
+	"type": "origins:modify_damage_taken",
+	"damage_condition": {
+		"type": "origins:in_tag",
+		"tag": "minecraft:is_fire"
+	},
+	"modifier": {
+		"operation": "multiply_total",
+		"value": 1.0
+	}
+},
+"name": "Fire Vulnerability",
+"description": "Although you feel fine near soul fire, the regular burning fire from torches and campfires has a strong weakening effect on you. As such, you also take an extra 100% more damage from fire."
+}

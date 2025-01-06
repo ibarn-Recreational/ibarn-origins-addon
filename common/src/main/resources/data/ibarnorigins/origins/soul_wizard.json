@@ -1,0 +1,16 @@
+{
+	"powers": [
+		"ibarnorigins:soulmage_init",
+		"ibarnorigins:kiblast",
+		"ibarnorigins:soulfire_strength",
+		"ibarnorigins:soul_speed",
+		"ibarnorigins:ki_immunity",
+		"ibarnorigins:soulmage_vegetarian",
+		"ibarnorigins:soulmage_fireweakness"
+	],
+	"icon": "minecraft:soul_lantern",
+	"order": 2,
+	"impact": 2,
+	"name": "Soul Mage",
+	"description": "A sub-race of humans who learned to channel their soul energy."
+}

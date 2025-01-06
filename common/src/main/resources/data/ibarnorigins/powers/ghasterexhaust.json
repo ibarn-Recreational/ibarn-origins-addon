@@ -1,0 +1,52 @@
+{
+  "type": "origins:multiple",
+  "exhaustion": {
+    "type": "origins:modify_exhaustion",
+    "modifier": {
+      "name": "Increased exhaustion",
+      "operation": "multiply_base",
+      "value": 1.2
+    }
+  },
+  "weak_arms": {
+    "type": "origins:modify_break_speed",
+    "modifier": {
+      "name": "Unbreakable natural stone",
+      "value": -1,
+      "operation": "multiply_total"
+    },
+    "block_condition": {
+      "type": "origins:and",
+      "conditions": [
+        {
+          "type": "origins:in_tag",
+          "tag": "origins:natural_stone"
+        },
+        {
+          "type": "origins:adjacent",
+          "adjacent_condition": {
+            "type": "origins:in_tag",
+            "tag": "origins:natural_stone"
+          },
+          "comparison": ">",
+          "compare_to": 2
+        }
+      ]
+    },
+    "condition": {
+      "type": "origins:status_effect",
+      "effect": "minecraft:strength",
+      "inverted": true
+    }
+  },
+  "weak_melee": {
+    "type": "origins:attribute",
+    "modifier": {
+      "attribute": "minecraft:generic.attack_damage",
+      "operation": "multiply_total",
+      "value": -0.25
+    }
+  },
+  "name": "Weak Physique",
+  "description": "Although you became more adapted to the Overworld, you are physically weak, not being able to break adjacent stone blocks, deal 25% less melee damage, and can become exhausted quickly."
+}

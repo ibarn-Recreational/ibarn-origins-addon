@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "origins": [
+	"ibarnorigins:ghaster",
+	"ibarnorigins:wither_phantom",
+	"ibarnorigins:soul_wizard",
+	"ibarnorigins:sandman"
+  ]
+}
