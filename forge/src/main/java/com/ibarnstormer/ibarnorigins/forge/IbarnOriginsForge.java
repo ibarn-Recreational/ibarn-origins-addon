@@ -7,7 +7,6 @@ import com.ibarnstormer.ibarnorigins.registry.IOEntities;
 import com.ibarnstormer.ibarnorigins.registry.IOParticles;
 import com.ibarnstormer.ibarnorigins.registry.IOSounds;
 import com.ibarnstormer.ibarnorigins.registry.utils.IORegisterWrapper;
-import dev.architectury.platform.forge.EventBuses;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.particle.ParticleType;
@@ -42,7 +41,6 @@ public class IbarnOriginsForge {
         IOSoundEventRegister.getRegister().register(FMLJavaModLoadingContext.get().getModEventBus());
 
         // Submit our event bus to let architectury register our content on the right time
-        EventBuses.registerModEventBus(IbarnOriginsMain.MODID, FMLJavaModLoadingContext.get().getModEventBus());
 
         // Initialize common things
         IbarnOriginsMain.init();
