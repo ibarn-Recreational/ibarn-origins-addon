@@ -61,6 +61,9 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
     public void tick() {
         super.tick();
         if(this.dataTracker.get(DATA_TICK) <= 0) {
+            if(this.getOwner() != null) {
+                this.setRotation(this.getOwner().getYaw() + 180, this.getOwner().getPitch());
+            }
             if(this.getOwner() != null && !this.getWorld().isClient()) {
                 HitResult cast = rayCast(this.getOwner());
                 if(cast != null) {
@@ -188,6 +191,10 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
 
     public void setCharged(boolean charged) {
         this.dataTracker.set(CHARGED, charged);
+    }
+
+    public int getDataTick() {
+        return this.dataTracker.get(DATA_TICK);
     }
 
     @Override

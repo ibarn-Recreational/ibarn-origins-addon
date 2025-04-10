@@ -41,10 +41,14 @@ public class SoulFireEffect extends StatusEffect {
             }
 
             if(kb != null) kb.addTemporaryModifier(kb_modifier);
+            entity.damage(entity.getDamageSources().indirectMagic(attacker, attacker), damage / 2);
             entity.damage(IODamageSources.entityDamageSource("soul_burn", attacker, entity.getWorld()), damage);
             if(kb != null) kb.removeModifier(kb_modifier);
         }
-        else entity.damage(IODamageSources.damageSource("soul_burn", entity.getWorld()), 1.0F);
+        else {
+            entity.damage(entity.getDamageSources().magic(), 0.5F);
+            entity.damage(IODamageSources.damageSource("soul_burn", entity.getWorld()), 1.0F);
+        }
     }
 
     @Override
