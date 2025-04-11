@@ -13,6 +13,6 @@ public class GrantSandPersonAttributesEffect extends StatusEffect {
     }
 
     public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-        if(entity instanceof IbarnOriginsEntity ioe) ioe.setSandPerson(!ioe.isSandPerson());
+        if(entity instanceof IbarnOriginsEntity ioe) ioe.setSandPerson(true);
     }
 }

@@ -92,5 +92,5 @@
 	}
 },
 "name": "Fire Vulnerability",
-"description": "Although you feel fine near soul fire, the regular burning fire from torches and campfires has a strong weakening effect on you. As such, you also take an extra 100% more damage from fire."
+"description": "Although you feel fine near soul fire, the regular burning fire from torches and campfires has a strong weakening effect on you. As such, you also take an extra 100% more damage from fire and go blind upon taking fire damage."
 }

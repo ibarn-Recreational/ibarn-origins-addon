@@ -14,7 +14,7 @@
   "entity_action_lost": {
     "type": "origins:apply_effect",
     "effect": {
-      "effect": "ibarnorigins:grant_sand_person_attributes",
+      "effect": "ibarnorigins:revoke_sand_person_attributes",
       "duration": 1,
       "amplifier": 0,
       "is_ambient": false,

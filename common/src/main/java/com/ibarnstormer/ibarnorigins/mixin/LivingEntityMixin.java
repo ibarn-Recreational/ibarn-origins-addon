@@ -7,6 +7,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -16,6 +17,7 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +57,8 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
     @Shadow public abstract boolean addStatusEffect(StatusEffectInstance effect, @Nullable Entity source);
 
+    @Shadow @Nullable private DamageSource lastDamageSource;
+    @Shadow private long lastDamageTime;
     @Unique
     private StatusEffectInstance soulBurning = null;
 
@@ -163,6 +167,10 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
                 this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 60, 1, true, false, false));
                 this.setFireTicks(0);
                 this.setOnFire(false);
+            }
+
+            if(this.lastDamageSource != null && this.lastDamageSource.isIn(DamageTypeTags.IS_FIRE) && this.getWorld().getTime() - this.lastDamageTime <= 2) {
+                this.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0, true, false, false));
             }
         }
 

@@ -6,13 +6,13 @@ import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 
-public class GrantSoulMageAttributesEffect extends StatusEffect {
+public class RevokeSandPersonAttributesEffect extends StatusEffect {
 
-    public GrantSoulMageAttributesEffect() {
+    public RevokeSandPersonAttributesEffect() {
         super(StatusEffectCategory.NEUTRAL, 0xffffff);
     }
 
     public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-        if(entity instanceof IbarnOriginsEntity ioe) ioe.setSoulMage(true);
+        if(entity instanceof IbarnOriginsEntity ioe) ioe.setSandPerson(false);
     }
 }

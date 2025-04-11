@@ -15,6 +15,8 @@ public class IOEffects {
 
     public static RegistryObjectWrapper<StatusEffect> GRANT_SOUL_MAGE;
     public static RegistryObjectWrapper<StatusEffect> GRANT_SAND_PERSON;
+    public static RegistryObjectWrapper<StatusEffect> REVOKE_SOUL_MAGE;
+    public static RegistryObjectWrapper<StatusEffect> REVOKE_SAND_PERSON;
 
 
     public static void init(IORegisterWrapper<?, StatusEffect> register) {
@@ -26,6 +28,8 @@ public class IOEffects {
 
         GRANT_SOUL_MAGE = register.register(IbarnOriginsMain.IOIdentifier("grant_soul_mage_attributes"), GrantSoulMageAttributesEffect::new);
         GRANT_SAND_PERSON = register.register(IbarnOriginsMain.IOIdentifier("grant_sand_person_attributes"), GrantSandPersonAttributesEffect::new);
+        REVOKE_SOUL_MAGE = register.register(IbarnOriginsMain.IOIdentifier("revoke_soul_mage_attributes"), RevokeSoulMageAttributesEffect::new);
+        REVOKE_SAND_PERSON = register.register(IbarnOriginsMain.IOIdentifier("revoke_sand_person_attributes"), RevokeSandPersonAttributesEffect::new);
     }
 
 }
