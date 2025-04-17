@@ -16,33 +16,6 @@
 			"type": "origins:or",
 			"conditions": [
 				{
-					"type": "origins:block_in_radius",
-					"radius": 5,
-					"block_condition": {
-						"type": "origins:or",
-						"conditions": [
-							{
-								"type": "origins:in_tag",
-								"tag": "ibarnorigins:soul_fire_no_campfire"
-							},
-							{
-								"type": "origins:and",
-								"conditions": [
-									{
-										"type": "origins:block",
-										"block": "minecraft:soul_campfire"
-									},
-									{
-										"type": "origins:block_state",
-										"property": "lit",
-										"value": "true"
-									}
-								]
-							}
-						]
-					}
-				},
-				{
 					"type": "origins:equipped_item",
 					"equipment_slot": "mainhand",
 					"item_condition": {
@@ -72,33 +45,6 @@
 		"condition": {
 			"type": "origins:or",
 			"conditions": [
-				{
-					"type": "origins:block_in_radius",
-					"radius": 5,
-					"block_condition": {
-						"type": "origins:or",
-						"conditions": [
-							{
-								"type": "origins:in_tag",
-								"tag": "ibarnorigins:soul_fire_no_campfire"
-							},
-							{
-								"type": "origins:and",
-								"conditions": [
-									{
-										"type": "origins:block",
-										"block": "minecraft:soul_campfire"
-									},
-									{
-										"type": "origins:block_state",
-										"property": "lit",
-										"value": "true"
-									}
-								]
-							}
-						]
-					}
-				},
 				{
 					"type": "origins:equipped_item",
 					"equipment_slot": "mainhand",

@@ -13,6 +13,7 @@
   "client": [
     "BipedEntityModelMixin",
     "EntityRendererDispatcherMixin",
+    "EntityRendererMixin",
     "InGameOverlayRendererMixin",
     "LivingEntityRendererMixin"
   ],

@@ -3,7 +3,10 @@ package com.ibarnstormer.ibarnorigins.mixin;
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import com.ibarnstormer.ibarnorigins.registry.IOParticles;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.CampfireBlock;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -15,9 +18,16 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.DamageTypeTags;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +41,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEntity {
@@ -163,6 +178,42 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
         // Soul Mage built-in abilities
         if(this.isSoulMage()) {
+
+            if(this.age % 20 == 0) {
+                // Optimized hardcoded power for fire / soul fire detection
+                TagKey<Block> fire = TagKey.of(RegistryKeys.BLOCK, Identifier.of("ibarnorigins", "fire"));
+
+                boolean foundSoulFire = false;
+                boolean foundFire = false;
+
+                for(int x = this.getBlockX() - 5; x < this.getBlockX() + 5; x++) {
+                    for(int y = this.getBlockY() - 5; y < this.getBlockY() + 5; y++) {
+                        for(int z = this.getBlockZ() - 5; z < this.getBlockZ() + 5; z++) {
+                            BlockState block = this.getWorld().getBlockState(new BlockPos(x, y, z));
+                            try {
+                                if(!foundSoulFire) foundSoulFire = (block.isIn(BlockTags.PIGLIN_REPELLENTS) && !block.isOf(Blocks.SOUL_CAMPFIRE)) || (block.isOf(Blocks.SOUL_CAMPFIRE) && block.get(CampfireBlock.LIT).equals(true));
+                                if(!foundFire) foundFire = block.isIn(fire) || (block.isOf(Blocks.CAMPFIRE) && block.get(CampfireBlock.LIT).equals(true));
+                            }
+                            catch(Exception ignored) {}
+
+                            if(foundFire && foundSoulFire) break;
+                        }
+                        if(foundFire && foundSoulFire) break;
+                    }
+                    if(foundFire && foundSoulFire) break;
+                }
+
+                if(foundSoulFire) {
+                    this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 20, 0, true, false, false));
+                }
+
+                if(foundFire) {
+                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 20, 0, true, false, false));
+                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 20, 0, true, false, true));
+                }
+
+            }
+
             if(this.getWorld().getBlockState(this.getVelocityAffectingPos()).isOf(Blocks.SOUL_FIRE) || this.getWorld().getBlockState(this.getBlockPos()).isOf(Blocks.SOUL_FIRE)) {
                 this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 60, 1, true, false, false));
                 this.setFireTicks(0);
