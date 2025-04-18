@@ -38,36 +38,6 @@
 			]
 		}
 	},
-	"visual": {
-		"type": "origins:particle",
-		"particle": "minecraft:soul_fire_flame",
-		"frequency": 4,
-		"condition": {
-			"type": "origins:or",
-			"conditions": [
-				{
-					"type": "origins:equipped_item",
-					"equipment_slot": "mainhand",
-					"item_condition": {
-						"type": "origins:ingredient",
-						"ingredient": {
-							"tag": "minecraft:piglin_repellents"
-						}
-					}
-				},
-				{
-					"type": "origins:equipped_item",
-					"equipment_slot": "offhand",
-					"item_condition": {
-						"type": "origins:ingredient",
-						"ingredient": {
-							"tag": "minecraft:piglin_repellents"
-						}
-					}
-				}
-			]
-		}
-	},
 	"name": "Soul Fire Strength",
 	"description": "Deal an additional 50% amount of damage while standing near soul fire sources or holding their respective items. Moreover, standing directly inside soul fire will boost melee attacks to 100% additional damage and 50% additional soul fire ball damage."
 }
