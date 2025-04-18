@@ -11,7 +11,7 @@ public class IOUtils {
 
     public static void renderParticles(World world, LivingEntity entity, ParticleEffect particleEffect) {
         if(world instanceof ClientWorld clientWorld) {
-            boolean render = (entity instanceof ClientPlayerEntity player && MinecraftClient.getInstance().player == player && !(MinecraftClient.getInstance().options.getPerspective().isFirstPerson() || MinecraftClient.getInstance().cameraEntity != player)) ||
+            boolean render = (entity instanceof ClientPlayerEntity player && MinecraftClient.getInstance().player == player && !(MinecraftClient.getInstance().options.getPerspective().isFirstPerson() && MinecraftClient.getInstance().cameraEntity == player)) ||
                     (entity instanceof ClientPlayerEntity player2 && MinecraftClient.getInstance().player != player2) ||
                     !(entity instanceof ClientPlayerEntity);
 
