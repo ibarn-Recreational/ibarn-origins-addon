@@ -22,6 +22,7 @@ import net.minecraft.potion.PotionUtil;
 import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -256,7 +257,7 @@ public class OwnedAreaEffectCloudEntity extends Entity implements Ownable {
                 if (list.isEmpty()) {
                     this.affectedEntities.clear();
                 } else {
-                    List<LivingEntity> list2 = this.getWorld().getNonSpectatingEntities(LivingEntity.class, this.getBoundingBox());
+                    List<LivingEntity> list2 = this.getWorld().getEntitiesByType(TypeFilter.instanceOf(LivingEntity.class), this.getBoundingBox(), e -> !e.isSpectator() && this.ownerUuid != e.getUuid() && !(e instanceof Ownable o && o.getOwner() != e));
                     if (!list2.isEmpty()) {
                         Iterator<LivingEntity> var27 = list2.iterator();
 

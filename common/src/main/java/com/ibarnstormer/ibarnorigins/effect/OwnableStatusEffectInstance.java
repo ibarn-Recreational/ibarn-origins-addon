@@ -3,6 +3,7 @@ package com.ibarnstormer.ibarnorigins.effect;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
@@ -50,6 +51,13 @@ public class OwnableStatusEffectInstance extends StatusEffectInstance {
         }
 
         return owner;
+    }
+
+    @Override
+    public void applyUpdateEffect(LivingEntity entity) {
+        if(this.getEffectType().isBeneficial() || entity.getUuid() != this.ownerUUID) {
+            super.applyUpdateEffect(entity);
+        }
     }
 
     @Override
