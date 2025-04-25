@@ -46,7 +46,8 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
     }
 
     protected float getDrag() {
-        return this.isCharged() ? 0.73F : super.getDrag();
+        float lockOnFactor = this.dataTracker.get(DATA_CACHED_HOMING_TARGET) != 0 ? 0.15F : 0.0F;
+        return this.isCharged() ? 0.73F - lockOnFactor : super.getDrag() - lockOnFactor;
     }
 
     public boolean isOnFire() {
@@ -94,6 +95,10 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
                 }
                 this.setVelocity(this.getVelocity().multiply(0.95D).add(new Vec3d(dirX, dirY, dirZ).normalize().multiply(0.25D)));
             }
+            else if(!this.getWorld().isClient()) {
+                this.getWorld().createExplosion(this, this.getX(), this.getY(), this.getZ(), 1.0F, false, World.ExplosionSourceType.NONE);
+                this.discard();
+            }
         }
     }
 
@@ -102,11 +107,13 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
         Box box = new Box(Math.min(owner.getX(), endPos.x), Math.min(owner.getY() + owner.getHeight(), endPos.y), Math.min(owner.getZ(), endPos.z), Math.max(owner.getX(), endPos.x), Math.max(owner.getY() + owner.getHeight(), endPos.y), Math.max(owner.getZ(), endPos.z)).expand(1, 1, 1);
         List<LivingEntity> list = owner.getWorld().getNonSpectatingEntities(LivingEntity.class, box);
 
+        Vec3d lookVec = endPos.subtract(startPos);
+
         double minDistance = Double.MAX_VALUE;
         LivingEntity closest = null;
 
         for(LivingEntity target : list) {
-            if(target != owner && !target.getPassengerList().contains(owner) && target.canSee(owner)) {
+            if(target != owner && !target.getPassengerList().contains(owner) && target.canSee(owner) && computeCosineSim(lookVec, target.getPos().subtract(startPos)) > 0.99) {
                 float f = owner.getTargetingMargin() + 0.15f;
                 Box box1 = owner.getBoundingBox().expand(f, f, f);
                 Optional<Vec3d> hit = box1.raycast(startPos, endPos);
@@ -202,16 +209,13 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
         return false;
     }
 
+    private double computeCosineSim(Vec3d vec1, Vec3d vec2) {
+        return Math.abs((vec1.dotProduct(vec2))/(vec1.length() * vec2.length()));
+    }
+
     static {
         CHARGED = DataTracker.registerData(HomingWitherSkullEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
         DATA_TICK = DataTracker.registerData(HomingWitherSkullEntity.class, TrackedDataHandlerRegistry.INTEGER);
         DATA_CACHED_HOMING_TARGET = DataTracker.registerData(HomingWitherSkullEntity.class, TrackedDataHandlerRegistry.INTEGER);
     }
-
-    /*
-    @Override
-    public Packet<ClientPlayPacketListener> createSpawnPacket() {
-        return ProjectileEntitySpawnPacket.createSpawnPacket(this, IOEntities.FIXED_WS_ID);
-    }
-     */
 }

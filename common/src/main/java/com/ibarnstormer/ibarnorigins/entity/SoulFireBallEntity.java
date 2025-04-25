@@ -130,11 +130,4 @@ public class SoulFireBallEntity extends ExplosiveProjectileEntity {
     public boolean canHit() {
         return false;
     }
-
-    /*
-    @Override
-    public Packet<ClientPlayPacketListener> createSpawnPacket() {
-        return ProjectileEntitySpawnPacket.createSpawnPacket(this, IOEntities.SOUL_FB_ID);
-    }
-     */
 }

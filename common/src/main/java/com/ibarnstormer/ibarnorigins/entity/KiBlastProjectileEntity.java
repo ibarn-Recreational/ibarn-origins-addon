@@ -153,11 +153,4 @@ public class KiBlastProjectileEntity extends ExplosiveProjectileEntity {
         CACHED_OWNER_ID = DataTracker.registerData(KiBlastProjectileEntity.class, TrackedDataHandlerRegistry.INTEGER);
     }
 
-    /*
-    @Override
-    public Packet<ClientPlayPacketListener> createSpawnPacket() {
-        return ProjectileEntitySpawnPacket.createSpawnPacket(this, IOEntities.KI_BLAST_ID);
-    }
-     */
-
 }
