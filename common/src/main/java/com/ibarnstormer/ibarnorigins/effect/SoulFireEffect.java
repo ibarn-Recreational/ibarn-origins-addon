@@ -37,7 +37,7 @@ public class SoulFireEffect extends StatusEffect {
 
             float damage = 1.0F;
             if(attacker instanceof PlayerEntity player) {
-                damage = Math.min(Math.max(1.0F, ((float) player.experienceLevel / 100) * (entity.getMaxHealth() / (float) (100 / 7.5))), Math.max(1.0F, entity.getMaxHealth() / (float) (100 / 7.5)));
+                damage = Math.min(Math.max(1.0F, ((float) player.experienceLevel / 100) * (entity.getMaxHealth() / 10.0F)), Math.max(1.0F, entity.getMaxHealth() / 10.0F));
             }
 
             if(kb != null) kb.addTemporaryModifier(kb_modifier);

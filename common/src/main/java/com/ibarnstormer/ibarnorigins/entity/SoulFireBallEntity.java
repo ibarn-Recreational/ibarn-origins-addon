@@ -119,6 +119,12 @@ public class SoulFireBallEntity extends ExplosiveProjectileEntity {
         return 0.95F;
     }
 
+    @Override
+    protected boolean canHit(Entity entity) {
+        if(entity == this.getOwner()) return false;
+        else return super.canHit(entity);
+    }
+
     protected ParticleEffect getParticleType() {
         return IOParticles.SOUL_MAGE_FLAME.get();
     }

@@ -26,7 +26,7 @@ public class CastingSoulFireballEffect extends StatusEffect {
         if(entity.getWorld() instanceof ServerWorld serverWorld) {
             serverWorld.playSound(null, entity.getX(), entity.getY(), entity.getZ(), IOSounds.KI_BLAST_FIRE.get(), SoundCategory.PLAYERS, 1.25f, 1);
 
-            SoulFireBallEntity fireball = new SoulFireBallEntity(entity, entity.getRotationVector().x, entity.getRotationVector().y, entity.getRotationVector().z, serverWorld);
+            SoulFireBallEntity fireball = new SoulFireBallEntity(entity, entity.getRotationVector().x, entity.getRotationVector().y, entity.getRotationVector().z, entity.getWorld());
             fireball.setPos(entity.getX(), entity.getEyeY(), entity.getZ());
 
             serverWorld.spawnEntity(fireball);

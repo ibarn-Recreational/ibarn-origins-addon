@@ -182,6 +182,12 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
     }
 
     @Override
+    protected boolean canHit(Entity entity) {
+        if(entity == this.getOwner()) return false;
+        else return super.canHit(entity);
+    }
+
+    @Override
     public boolean damage(DamageSource source, float amount) {
         return false;
     }
