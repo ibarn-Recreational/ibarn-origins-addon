@@ -26,7 +26,7 @@ public class AbstractFireBlockMixin extends Block {
     @Inject(method = "onEntityCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z", shift = At.Shift.BEFORE), cancellable = true)
     public void abstractFireBlock$onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, CallbackInfo ci) {
         if(entity instanceof IbarnOriginsEntity ioe && ioe.isSoulMage() && state.isOf(Blocks.SOUL_FIRE)) {
-            if(entity instanceof LivingEntity livingEntity) livingEntity.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 60, 1, true, false, false));
+            if(entity instanceof LivingEntity livingEntity) livingEntity.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 60, 1, true, false, true));
             entity.setFireTicks(0);
             entity.setOnFire(false);
 

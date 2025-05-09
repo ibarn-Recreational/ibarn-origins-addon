@@ -4,13 +4,13 @@
 		"type": "origins:stacking_status_effect",
 		"min_stacks": 0,
 		"max_stacks": 1,
-		"duration_per_stack": 20,
+		"duration_per_stack": 30,
 		"effect": {
 			"effect": "ibarnorigins:soul_fire_strength_effect",
 			"is_ambient": true,
 			"amplifier": 0,
 			"show_particles": false,
-			"show_icon": false
+			"show_icon": true
 		},
 		"condition": {
 			"type": "origins:or",

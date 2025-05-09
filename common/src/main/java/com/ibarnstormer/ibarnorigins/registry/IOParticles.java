@@ -9,11 +9,13 @@ public class IOParticles {
 
     public static RegistryObjectWrapper<DefaultParticleType> SOUL_BLAST;
     public static RegistryObjectWrapper<DefaultParticleType> SOUL_MAGE_FLAME;
+    public static RegistryObjectWrapper<DefaultParticleType> EMPTY_PARTICLE;
 
     @SuppressWarnings("unchecked")
     public static void init(IORegisterWrapper register) {
         SOUL_BLAST = register.register(IbarnOriginsMain.IOIdentifier("soul_blast_particle"), () -> new DefaultParticleType(false));
         SOUL_MAGE_FLAME = register.register(IbarnOriginsMain.IOIdentifier("soul_mage_fire_flame"), () -> new DefaultParticleType(false));
+        EMPTY_PARTICLE = register.register(IbarnOriginsMain.IOIdentifier("empty_particle"), () -> new DefaultParticleType(false));
     }
 
 }

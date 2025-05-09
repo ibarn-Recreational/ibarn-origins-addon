@@ -2,6 +2,7 @@ package com.ibarnstormer.ibarnorigins.mixin;
 
 import com.ibarnstormer.ibarnorigins.client.ModModelLoader;
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
+import com.ibarnstormer.ibarnorigins.entity.SoulFireBallEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.TexturedRenderLayers;
@@ -73,7 +74,7 @@ public class EntityRendererDispatcherMixin {
         if(entity instanceof LivingEntity livingEntity && livingEntity.hasStatusEffect(IOEffects.SOUL_FIRE_STRENGTH.get()) && livingEntity.getStatusEffect(IOEffects.SOUL_FIRE_STRENGTH.get()).getAmplifier() >= 1) {
             renderSoulFire(matrices, vertexConsumers, entity, ModModelLoader.SOUL_FIRE_0.getSprite(), ModModelLoader.SOUL_FIRE_1.getSprite());
         }
-        else if(entity instanceof IbarnOriginsEntity ioe && ioe.onSoulMageFire()) {
+        else if((entity instanceof IbarnOriginsEntity ioe && ioe.onSoulMageFire()) || entity instanceof SoulFireBallEntity) {
             renderSoulFire(matrices, vertexConsumers, entity, ModModelLoader.SOUL_MAGE_FIRE_0.getSprite(), ModModelLoader.SOUL_MAGE_FIRE_1.getSprite());
         }
     }

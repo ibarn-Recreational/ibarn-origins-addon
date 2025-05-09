@@ -35,9 +35,9 @@ public class SoulFireEffect extends StatusEffect {
             EntityAttributeInstance kb = entity.getAttributeInstance(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE);
             EntityAttributeModifier kb_modifier = new EntityAttributeModifier("knockback_prevention", 1D, EntityAttributeModifier.Operation.ADDITION);
 
-            float damage = 1.0F;
+            float damage = 2.0F;
             if(attacker instanceof PlayerEntity player) {
-                damage = Math.min(Math.max(1.0F, ((float) player.experienceLevel / 100) * (entity.getMaxHealth() / 10.0F)), Math.max(1.0F, entity.getMaxHealth() / 10.0F));
+                damage = Math.min(Math.max(2.0F, ((float) player.experienceLevel / 100) * (entity.getMaxHealth() / (100.0F / 7.5F))), Math.max(2.0F, entity.getMaxHealth() / (100.0F / 7.5F)));
             }
 
             if(kb != null) kb.addTemporaryModifier(kb_modifier);
@@ -46,8 +46,8 @@ public class SoulFireEffect extends StatusEffect {
             if(kb != null) kb.removeModifier(kb_modifier);
         }
         else {
-            entity.damage(entity.getDamageSources().magic(), 0.5F);
-            entity.damage(IODamageSources.damageSource("soul_burn", entity.getWorld()), 1.0F);
+            entity.damage(entity.getDamageSources().magic(), 1.0F);
+            entity.damage(IODamageSources.damageSource("soul_burn", entity.getWorld()), 2.0F);
         }
     }
 

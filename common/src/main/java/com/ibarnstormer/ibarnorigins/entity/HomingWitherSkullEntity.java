@@ -12,7 +12,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.projectile.WitherSkullEntity;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
@@ -28,7 +28,7 @@ import net.minecraft.world.explosion.Explosion;
 import java.util.List;
 import java.util.Optional;
 
-public class HomingWitherSkullEntity extends WitherSkullEntity {
+public class HomingWitherSkullEntity extends ExplosiveProjectileEntity {
     private static final TrackedData<Boolean> CHARGED;
     private static final TrackedData<Integer> DATA_CACHED_HOMING_TARGET;
     private static final TrackedData<Integer> DATA_TICK;
@@ -37,12 +37,12 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
         super(IOEntities.HOMING_WITHER_SKULL_ENTITY.get(), world);
     }
 
-    public HomingWitherSkullEntity(EntityType<? extends WitherSkullEntity> entityType, World world) {
+    public HomingWitherSkullEntity(EntityType<HomingWitherSkullEntity> entityType, World world) {
         super(entityType, world);
     }
 
     public HomingWitherSkullEntity(World world, LivingEntity owner, double directionX, double directionY, double directionZ) {
-        super(world, owner, directionX, directionY, directionZ);
+        super(IOEntities.HOMING_WITHER_SKULL_ENTITY.get(), owner, directionX, directionY, directionZ, world);
     }
 
     protected float getDrag() {
@@ -147,7 +147,7 @@ public class HomingWitherSkullEntity extends WitherSkullEntity {
             boolean bl2;
             if (entity2 instanceof LivingEntity) {
                 LivingEntity livingEntity = (LivingEntity)entity2;
-                bl2 = entity.damage(this.getDamageSources().witherSkull(this, livingEntity), 8.0F);
+                bl2 = entity.damage(this.getDamageSources().witherSkull(null, livingEntity), 8.0F);
                 if (bl2) {
                     if (entity.isAlive()) {
                         this.applyDamageEffects(livingEntity, entity);

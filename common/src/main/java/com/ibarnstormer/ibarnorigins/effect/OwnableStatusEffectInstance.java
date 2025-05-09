@@ -64,7 +64,9 @@ public class OwnableStatusEffectInstance extends StatusEffectInstance {
     public NbtCompound writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
 
-        nbt.putUuid("ownerUUID", this.ownerUUID);
+        if (this.ownerUUID != null) {
+            nbt.putUuid("ownerUUID", this.ownerUUID);
+        }
 
         return nbt;
     }

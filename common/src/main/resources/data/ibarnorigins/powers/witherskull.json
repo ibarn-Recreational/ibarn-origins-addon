@@ -13,6 +13,6 @@
     "key": "key.origins.primary_active",
     "continuous": false
   },
-  "name": "Wither Skull Conjurement",
-  "description": "Channel the forces of the undead and fire homing wither skulls at your foes."
+  "name": "Homing Wither Skull",
+  "description": "Channel the forces of the undead and fire wither skulls that seek out your foes."
 }

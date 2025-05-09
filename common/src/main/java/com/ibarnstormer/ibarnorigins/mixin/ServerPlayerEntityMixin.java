@@ -16,6 +16,7 @@ public class ServerPlayerEntityMixin {
         if(newPlayer instanceof IbarnOriginsEntity newIOE && oldPlayer instanceof IbarnOriginsEntity oldIOE) {
             if(oldIOE.isSandPerson()) newIOE.setSandPerson(true);
             if(oldIOE.isSoulMage()) newIOE.setSoulMage(true);
+            if(oldIOE.onSoulMageFire()) newIOE.setOnSoulMageFire(true);
         }
     }
 

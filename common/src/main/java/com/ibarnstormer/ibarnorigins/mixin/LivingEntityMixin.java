@@ -4,6 +4,7 @@ import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import com.ibarnstormer.ibarnorigins.registry.IOParticles;
 import com.ibarnstormer.ibarnorigins.utils.IOUtils;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -28,6 +29,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -40,6 +42,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Collection;
 import java.util.Map;
 
 @Mixin(LivingEntity.class)
@@ -47,28 +50,16 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
     @Shadow
     protected abstract boolean isOnSoulSpeedBlock();
-
     @Shadow public abstract float getBodyYaw();
-
     @Shadow public abstract void setBodyYaw(float bodyYaw);
-
     @Shadow public abstract float getHeadYaw();
-
     @Shadow public abstract boolean addStatusEffect(StatusEffectInstance effect);
-
     @Shadow public abstract boolean isInsideWall();
-
     @Shadow protected abstract void onStatusEffectApplied(StatusEffectInstance effect, @Nullable Entity source);
-
     @Shadow @Final private Map<StatusEffect, StatusEffectInstance> activeStatusEffects;
-
     @Shadow protected abstract void onStatusEffectUpgraded(StatusEffectInstance effect, boolean reapplyEffect, @Nullable Entity source);
-
-    @Shadow public abstract boolean addStatusEffect(StatusEffectInstance effect, @Nullable Entity source);
-
     @Shadow @Nullable private DamageSource lastDamageSource;
     @Shadow private long lastDamageTime;
-
     @Shadow public abstract boolean hasStatusEffect(StatusEffect effect);
 
     @Unique
@@ -82,6 +73,8 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
     private static final TrackedData<Boolean> IS_SAND_PERSON = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     @Unique
     private static final TrackedData<Boolean> IS_ON_SOUL_MAGE_FIRE = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    @Unique
+    private static final TrackedData<Boolean> IS_INFLATED = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -173,6 +166,12 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
             }
         }
 
+        // Inflation effect
+        if(this.hasStatusEffect(IOEffects.INFLATION.get()) && this.isSneaking()) {
+            this.addVelocity(this.getRotationVector().x * 0.035, -0.06, this.getRotationVector().z * 0.035);
+            this.velocityModified = true;
+        }
+
         // Soul Mage built-in abilities
         if(this.isSoulMage()) {
 
@@ -201,12 +200,12 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
                 }
 
                 if(foundSoulFire) {
-                    this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 20, 0, true, false, false));
+                    this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 30, 0, true, false, true));
                 }
 
                 if(foundFire) {
-                    this.addStatusEffect(new StatusEffectInstance(IOEffects.FIRE_WEAKNESS.get(), 20, 0, true, false, false));
-                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 20, 0, true, false, true));
+                    this.addStatusEffect(new StatusEffectInstance(IOEffects.FIRE_WEAKNESS.get(), 30, 0, true, false, true));
+                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 30, 0, false, false, false));
                 }
 
             }
@@ -219,7 +218,7 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
             }
 
             if(this.getWorld().getBlockState(this.getVelocityAffectingPos()).isOf(Blocks.SOUL_FIRE) || this.getWorld().getBlockState(this.getBlockPos()).isOf(Blocks.SOUL_FIRE)) {
-                this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 60, 1, true, false, false));
+                this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.get(), 60, 1, true, false, true));
                 this.setFireTicks(0);
                 this.setOnFire(false);
             }
@@ -232,9 +231,9 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
         // Sand Person built-in abilities
         if(this.isSandPerson()) {
             if(this.getWorld().getBlockState(this.getVelocityAffectingPos()).isIn(BlockTags.SAND) || this.getWorld().getBlockState(this.getBlockPos()).isIn(BlockTags.SAND)) {
-                this.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 20, 2, true, false, false));
+                this.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 20, 2, true, false, true));
                 if(this.getWorld().getBlockState(this.getBlockPos().up()).isIn(BlockTags.SAND)) {
-                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 2, true, false, false));
+                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 2, true, false, true));
                 }
             }
         }

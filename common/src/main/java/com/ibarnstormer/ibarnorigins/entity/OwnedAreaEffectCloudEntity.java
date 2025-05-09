@@ -257,7 +257,13 @@ public class OwnedAreaEffectCloudEntity extends Entity implements Ownable {
                 if (list.isEmpty()) {
                     this.affectedEntities.clear();
                 } else {
-                    List<LivingEntity> list2 = this.getWorld().getEntitiesByType(TypeFilter.instanceOf(LivingEntity.class), this.getBoundingBox(), e -> !e.isSpectator() && this.ownerUuid != e.getUuid() && !(e instanceof Ownable o && o.getOwner() == this.owner) && !(e instanceof Tameable t && t.getOwner() == this.owner) && !(e.isTeammate(this.owner)));
+                    List<LivingEntity> list2;
+                    if(this.getOwner() != null) {
+                        list2 = this.getWorld().getEntitiesByType(TypeFilter.instanceOf(LivingEntity.class), this.getBoundingBox(), e -> !e.isSpectator() && this.ownerUuid != e.getUuid() && !(e instanceof Ownable o && o.getOwner() == this.owner) && !(e instanceof Tameable t && t.getOwner() == this.owner) && !(e.isTeammate(this.owner)));
+                    }
+                    else {
+                        list2 = this.getWorld().getEntitiesByType(TypeFilter.instanceOf(LivingEntity.class), this.getBoundingBox(), e -> !e.isSpectator());
+                    }
                     if (!list2.isEmpty()) {
                         Iterator<LivingEntity> var27 = list2.iterator();
 

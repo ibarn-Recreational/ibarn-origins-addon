@@ -12,12 +12,14 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 
 public class SoulFireBallEntity extends ExplosiveProjectileEntity {
@@ -40,6 +42,28 @@ public class SoulFireBallEntity extends ExplosiveProjectileEntity {
 
     public SoulFireBallEntity(LivingEntity owner, double directionX, double directionY, double directionZ, World world) {
         super(IOEntities.SOUL_FIRE_BALL_ENTITY.get(), owner, directionX, directionY, directionZ, world);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        Entity owner = this.getOwner();
+        if (this.getWorld().isClient || (owner == null || !owner.isRemoved()) && this.getWorld().isChunkLoaded(this.getBlockPos())) {
+
+            Vec3d vec3d = this.getVelocity();
+            double d = this.getX() - vec3d.x;
+            double e = this.getY() - vec3d.y;
+            double f = this.getZ() - vec3d.z;
+
+            Random random = this.getWorld().getRandom();
+
+            double xv = (random.nextBoolean() ? 1 : -1) * random.nextBetween(1, 100) * 2e-4;
+            double yv = (random.nextBoolean() ? 1 : -1) * random.nextBetween(1, 100) * 2e-4;
+            double zv = (random.nextBoolean() ? 1 : -1) * random.nextBetween(1, 100) * 2e-4;
+
+            this.getWorld().addParticle(ParticleTypes.SMOKE, d, e + 0.2, f, xv, yv, zv);
+        }
     }
 
 
@@ -65,12 +89,12 @@ public class SoulFireBallEntity extends ExplosiveProjectileEntity {
                     areaEffectCloudEntity.setReapplicationDelay(15);
                 }
 
-                areaEffectCloudEntity.addEffect(new OwnableStatusEffectInstance(IOEffects.SOUL_FIRE.get(), 100, charged ? soulFireStrength.getAmplifier() : 0, true, false, true, player.getUuid()));
+                areaEffectCloudEntity.addEffect(new OwnableStatusEffectInstance(IOEffects.SOUL_FIRE.get(), 100, charged ? soulFireStrength.getAmplifier() : 0, false, false, true, player.getUuid()));
             }
             else {
                 areaEffectCloudEntity.setRadius(1.5F);
                 areaEffectCloudEntity.setDuration(80);
-                areaEffectCloudEntity.addEffect(new OwnableStatusEffectInstance(IOEffects.SOUL_FIRE.get(), 100, 0, true, false, true, null));
+                areaEffectCloudEntity.addEffect(new OwnableStatusEffectInstance(IOEffects.SOUL_FIRE.get(), 100, 0, false, false, true, null));
             }
             if (hitResult.getType() == HitResult.Type.ENTITY) {
                 areaEffectCloudEntity.setPosition(((EntityHitResult) hitResult).getEntity().getX(), ((EntityHitResult) hitResult).getEntity().getY(), ((EntityHitResult) hitResult).getEntity().getZ());
@@ -100,17 +124,16 @@ public class SoulFireBallEntity extends ExplosiveProjectileEntity {
 
                 entity.damage(entity.getDamageSources().indirectMagic(this, player), damage / 2);
                 entity.damage(IODamageSources.entityDamageSource("soul_blast", player, this.getWorld()), damage);
-                if(entity instanceof LivingEntity livingEntity) livingEntity.addStatusEffect(new OwnableStatusEffectInstance(IOEffects.SOUL_FIRE.get(), 100, charged ? soulFireStrength.getAmplifier() : 0, true, false, true, player.getUuid()));
+                if(entity instanceof LivingEntity livingEntity) livingEntity.addStatusEffect(new OwnableStatusEffectInstance(IOEffects.SOUL_FIRE.get(), 100, charged ? soulFireStrength.getAmplifier() : 0, false, false, true, player.getUuid()));
             }
             else {
                 entity.damage(entity.getDamageSources().indirectMagic(this, entity2), 4.0F);
                 entity.damage(IODamageSources.entityDamageSource("soul_blast", entity2, this.getWorld()), 8.0F);
-                if(entity instanceof LivingEntity livingEntity) livingEntity.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE.get(), 100, 0, true, true));
+                if(entity instanceof LivingEntity livingEntity) livingEntity.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE.get(), 100, 0, false, false, true));
             }
             if (entity2 instanceof LivingEntity) {
                 this.applyDamageEffects((LivingEntity)entity2, entity);
             }
-            if(entity instanceof LivingEntity le && entity2 != null) le.takeKnockback(1.0F, MathHelper.sin(entity2.getYaw() * 0.017453292F), -MathHelper.cos(entity2.getYaw() * 0.017453292F));
         }
     }
 
@@ -125,14 +148,17 @@ public class SoulFireBallEntity extends ExplosiveProjectileEntity {
         else return super.canHit(entity);
     }
 
+    @Override
     protected ParticleEffect getParticleType() {
-        return IOParticles.SOUL_MAGE_FLAME.get();
+        return IOParticles.EMPTY_PARTICLE.get();
     }
 
+    @Override
     protected boolean isBurning() {
         return false;
     }
 
+    @Override
     public boolean canHit() {
         return false;
     }

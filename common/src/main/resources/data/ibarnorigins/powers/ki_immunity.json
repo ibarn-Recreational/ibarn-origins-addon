@@ -1,36 +1,25 @@
 {
 	"type": "origins:multiple",
-	"indirect_magic": {
-		"type": "origins:modify_damage_taken",
-		"damage_condition": {
-			"type": "origins:name",
-			"name": "indirectMagic"
-		},
-		"modifier": {
-			"operation": "multiply_total",
-			"value": -0.5
-		}
-	},
 	"magic": {
 		"type": "origins:modify_damage_taken",
 		"damage_condition": {
-			"type": "origins:name",
-			"name": "magic"
-		},
-		"modifier": {
-			"operation": "multiply_total",
-			"value": -0.5
-		}
-	},
-	"ki_laser": {
-		"type": "origins:modify_damage_taken",
-		"damage_condition": {
-			"type": "origins:name",
-			"name": "soulBlast"
+			"type": "origins:in_tag",
+			"tag": "minecraft:witch_resistant_to"
 		},
 		"modifier": {
 			"operation": "multiply_total",
 			"value": -0.75
+		}
+	},
+	"soul_fire_ball": {
+		"type": "origins:modify_damage_taken",
+		"damage_condition": {
+			"type": "origins:name",
+			"name": "soul_blast"
+		},
+		"modifier": {
+			"operation": "multiply_total",
+			"value": -0.9
 		}
 	},
 	"soul_burning_immunity": {

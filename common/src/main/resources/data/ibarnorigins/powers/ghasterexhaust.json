@@ -12,7 +12,7 @@
     "type": "origins:modify_break_speed",
     "modifier": {
       "name": "Unbreakable natural stone",
-      "value": -1,
+      "value": -0.5,
       "operation": "multiply_total"
     },
     "block_condition": {
@@ -21,15 +21,6 @@
         {
           "type": "origins:in_tag",
           "tag": "origins:natural_stone"
-        },
-        {
-          "type": "origins:adjacent",
-          "adjacent_condition": {
-            "type": "origins:in_tag",
-            "tag": "origins:natural_stone"
-          },
-          "comparison": ">",
-          "compare_to": 2
         }
       ]
     },
@@ -39,6 +30,7 @@
       "inverted": true
     }
   },
+
   "weak_melee": {
     "type": "origins:attribute",
     "modifier": {
@@ -48,5 +40,5 @@
     }
   },
   "name": "Weak Physique",
-  "description": "Although you became more adapted to the Overworld, you are physically weak, not being able to break adjacent stone blocks, deal 25% less melee damage, and can become exhausted quickly."
+  "description": "Although you became more adapted to the Overworld, you are physically weak, mine stone slightly slower, deal 25% less melee damage, and can become exhausted quickly."
 }
