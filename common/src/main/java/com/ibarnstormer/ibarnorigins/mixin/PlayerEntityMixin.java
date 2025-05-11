@@ -33,7 +33,7 @@ public class PlayerEntityMixin {
                 boolean hasMeatInRecipe = recipes.stream().anyMatch(r -> r.getIngredients().stream().anyMatch(i -> Arrays.stream(i.getMatchingStacks()).anyMatch(is -> is.isIn(meatTag))));
                 FoodComponent food = stack.getItem().getFoodComponent();
 
-                if (!stack.isIn(meatTag) && !hasMeatInRecipe && !(food != null && food.isMeat()) && !world.isClient() && stack.getItem().getFoodComponent() != null) {
+                if (food != null && !stack.isIn(meatTag) && !hasMeatInRecipe && !food.isMeat() && !world.isClient()) {
                     int amount = Math.min((stack.getItem().getFoodComponent().getHunger() + Math.round(stack.getItem().getFoodComponent().getSaturationModifier())) * 2, Integer.MAX_VALUE);
                     ExperienceOrbEntity orb = new ExperienceOrbEntity(world, player.getX(), player.getY(), player.getZ(), amount);
                     world.spawnEntity(orb);
