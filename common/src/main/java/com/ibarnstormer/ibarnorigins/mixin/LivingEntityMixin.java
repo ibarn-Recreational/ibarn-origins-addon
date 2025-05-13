@@ -4,7 +4,6 @@ import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import com.ibarnstormer.ibarnorigins.registry.IOParticles;
 import com.ibarnstormer.ibarnorigins.utils.IOUtils;
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -13,6 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -29,7 +30,6 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -42,14 +42,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Collection;
 import java.util.Map;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEntity {
 
-    @Shadow
-    protected abstract boolean isOnSoulSpeedBlock();
+    @Shadow protected abstract boolean isOnSoulSpeedBlock();
     @Shadow public abstract float getBodyYaw();
     @Shadow public abstract void setBodyYaw(float bodyYaw);
     @Shadow public abstract float getHeadYaw();
@@ -159,10 +157,11 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
                 float i = MathHelper.sin(g);
 
                 int xDelta = getWorld().getRandom().nextBetween(-1, 1);
+                int yDelta = getWorld().getRandom().nextBetween(-1, 1);
                 int zDelta = getWorld().getRandom().nextBetween(-1, 1);
 
-                getWorld().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() + (double)h * 0.6, this.getY() + this.getBoundingBox().getYLength() + 0.2, this.getZ() + (double)i * 0.6, 0.04 * xDelta, 0.03, 0.035 * zDelta);
-                getWorld().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() - (double)h * 0.6, this.getY() + this.getBoundingBox().getYLength() + 0.2, this.getZ() - (double)i * 0.6, 0.04 * xDelta, 0.03, 0.035 * zDelta);
+                getWorld().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() + (double)h * 0.6, this.getY() + this.getBoundingBox().getYLength() + 0.2, this.getZ() + (double)i * 0.6, 0.025 * xDelta, 0.01 * yDelta, 0.02 * zDelta);
+                getWorld().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() - (double)h * 0.6, this.getY() + this.getBoundingBox().getYLength() + 0.2, this.getZ() - (double)i * 0.6, 0.025 * xDelta, 0.01 * yDelta, 0.02 * zDelta);
             }
         }
 
@@ -175,7 +174,7 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
         // Soul Mage built-in abilities
         if(this.isSoulMage()) {
 
-            if(this.age % 20 == 0) {
+            if(this.age % 20 == 0 && !this.getWorld().isClient()) {
                 // Optimized hardcoded power for fire / soul fire detection
                 TagKey<Block> fire = TagKey.of(RegistryKeys.BLOCK, Identifier.of("ibarnorigins", "fire"));
 
@@ -223,14 +222,14 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
                 this.setOnFire(false);
             }
 
-            if(this.lastDamageSource != null && this.lastDamageSource.isIn(DamageTypeTags.IS_FIRE) && this.getWorld().getTime() - this.lastDamageTime <= 2) {
+            if(this.lastDamageSource != null && this.lastDamageSource.isIn(DamageTypeTags.IS_FIRE) && this.getWorld().getTime() - this.lastDamageTime <= 2 && !this.getWorld().isClient()) {
                 this.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0, true, false, false));
             }
         }
 
         // Sand Person built-in abilities
         if(this.isSandPerson()) {
-            if(this.getWorld().getBlockState(this.getVelocityAffectingPos()).isIn(BlockTags.SAND) || this.getWorld().getBlockState(this.getBlockPos()).isIn(BlockTags.SAND)) {
+            if((this.getWorld().getBlockState(this.getVelocityAffectingPos()).isIn(BlockTags.SAND) || this.getWorld().getBlockState(this.getBlockPos()).isIn(BlockTags.SAND)) && !this.getWorld().isClient()) {
                 this.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 20, 2, true, false, true));
                 if(this.getWorld().getBlockState(this.getBlockPos().up()).isIn(BlockTags.SAND)) {
                     this.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 2, true, false, true));

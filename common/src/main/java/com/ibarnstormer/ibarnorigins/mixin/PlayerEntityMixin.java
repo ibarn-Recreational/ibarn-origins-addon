@@ -28,15 +28,18 @@ public class PlayerEntityMixin {
         PlayerEntity player = (PlayerEntity) (Object) this;
         if(player instanceof IbarnOriginsEntity ioe && ioe.isSoulMage()) {
             try {
-                List<Recipe<?>> recipes = world.getRecipeManager().values().stream().filter(r -> r.createIcon().getItem() == stack.getItem()).toList();
-                TagKey<Item> meatTag = TagKey.of(RegistryKeys.ITEM, Identifier.of("origins", "meat"));
-                boolean hasMeatInRecipe = recipes.stream().anyMatch(r -> r.getIngredients().stream().anyMatch(i -> Arrays.stream(i.getMatchingStacks()).anyMatch(is -> is.isIn(meatTag))));
                 FoodComponent food = stack.getItem().getFoodComponent();
 
-                if (food != null && !stack.isIn(meatTag) && !hasMeatInRecipe && !food.isMeat() && !world.isClient()) {
-                    int amount = Math.min((stack.getItem().getFoodComponent().getHunger() + Math.round(stack.getItem().getFoodComponent().getSaturationModifier())) * 2, Integer.MAX_VALUE);
-                    ExperienceOrbEntity orb = new ExperienceOrbEntity(world, player.getX(), player.getY(), player.getZ(), amount);
-                    world.spawnEntity(orb);
+                if(food != null) {
+                    List<Recipe<?>> recipes = world.getRecipeManager().values().stream().filter(r -> r.createIcon().getItem() == stack.getItem()).toList();
+                    TagKey<Item> meatTag = TagKey.of(RegistryKeys.ITEM, Identifier.of("origins", "meat"));
+                    boolean hasMeatInRecipe = recipes.stream().anyMatch(r -> r.getIngredients().stream().anyMatch(i -> Arrays.stream(i.getMatchingStacks()).anyMatch(is -> is.isIn(meatTag) || (is.getItem().getFoodComponent() != null && is.getItem().getFoodComponent().isMeat()))));
+
+                    if (!stack.isIn(meatTag) && !hasMeatInRecipe && !food.isMeat() && !world.isClient()) {
+                        int amount = Math.min((stack.getItem().getFoodComponent().getHunger() + Math.round(stack.getItem().getFoodComponent().getSaturationModifier())) * 2, Integer.MAX_VALUE);
+                        ExperienceOrbEntity orb = new ExperienceOrbEntity(world, player.getX(), player.getY(), player.getZ(), amount);
+                        world.spawnEntity(orb);
+                    }
                 }
             }
             catch(Exception ignored) {}
