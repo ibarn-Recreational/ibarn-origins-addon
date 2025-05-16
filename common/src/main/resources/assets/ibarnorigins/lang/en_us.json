@@ -8,8 +8,8 @@
   "entity.ibarnorigins.soul_fire_ball": "Soul Fire Ball",
   "entity.ibarnorigins.homing_wither_skull": "Homing Wither Skull",
   "entity.ibarnorigins.owned_area_effect_cloud": "Area Effect Cloud Entity",
-  "death.attack.ibarnorigins.soulBurn": "%1$s's soul burned away",
-  "death.attack.ibarnorigins.soulBurn.player": "%1$s's soul burned away whilst trying to escape %2$s",
+  "death.attack.ibarnorigins.soul_burn": "%1$s's soul burned away",
+  "death.attack.ibarnorigins.soul_burn.player": "%1$s's soul burned away whilst trying to escape %2$s",
   "death.attack.ibarnorigins.soulBlast": "%1$s was vaporized by concentrated soul energy",
   "death.attack.ibarnorigins.soulBlast.player": "%1$s was vaporized by concentrated soul energy whilst trying to escape %2$s"
 }
