@@ -2,9 +2,11 @@ package com.ibarnstormer.ibarnorigins.entity;
 
 import com.ibarnstormer.ibarnorigins.registry.IOEntities;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -25,8 +27,11 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class HomingWitherSkullEntity extends ExplosiveProjectileEntity {
     private static final TrackedData<Boolean> CHARGED;
@@ -113,7 +118,7 @@ public class HomingWitherSkullEntity extends ExplosiveProjectileEntity {
         LivingEntity closest = null;
 
         for(LivingEntity target : list) {
-            if(target != owner && !target.getPassengerList().contains(owner) && target.canSee(owner) && computeCosineSim(lookVec, target.getPos().subtract(startPos)) > 0.99) {
+            if(target != owner && !target.getPassengerList().contains(owner) && !(target instanceof Ownable o && o.getOwner() == this.getOwner()) && !(target instanceof Tameable t && t.getOwner() == this.getOwner()) && !target.isTeammate(this.getOwner()) && target.canSee(owner) && computeCosineSim(lookVec, target.getPos().subtract(startPos)) > 0.99) {
                 float f = owner.getTargetingMargin() + 0.15f;
                 Box box1 = owner.getBoundingBox().expand(f, f, f);
                 Optional<Vec3d> hit = box1.raycast(startPos, endPos);
@@ -147,7 +152,13 @@ public class HomingWitherSkullEntity extends ExplosiveProjectileEntity {
             boolean bl2;
             if (entity2 instanceof LivingEntity) {
                 LivingEntity livingEntity = (LivingEntity)entity2;
-                bl2 = entity.damage(this.getDamageSources().witherSkull(null, livingEntity), 8.0F);
+                float attackDamageScaler = 1;
+                EntityAttributeInstance damageAttribute = livingEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+                if (damageAttribute != null) {
+                    attackDamageScaler = (float) damageAttribute.getValue();
+                }
+
+                bl2 = entity.damage(this.getDamageSources().witherSkull(null, livingEntity), 7.0F + attackDamageScaler);
                 if (bl2) {
                     if (entity.isAlive()) {
                         this.applyDamageEffects(livingEntity, entity);

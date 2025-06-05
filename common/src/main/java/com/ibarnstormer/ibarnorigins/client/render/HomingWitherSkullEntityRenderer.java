@@ -34,7 +34,7 @@ public class HomingWitherSkullEntityRenderer extends EntityRenderer<HomingWither
         return TexturedModelData.of(modelData, 64, 64);
     }
 
-    protected int getBlockLight(WitherSkullEntity arg, BlockPos arg2) {
+    protected int getBlockLight(HomingWitherSkullEntity arg, BlockPos arg2) {
         return 15;
     }
 
