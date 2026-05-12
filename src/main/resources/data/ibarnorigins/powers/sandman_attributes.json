@@ -1,0 +1,101 @@
+{
+  "type": "origins:multiple",
+	"sandy_appearance": {
+		 "type": "origins:model_color",
+		 "red": 0.858,
+	     "green": 0.788,
+		 "blue": 0.498
+	},
+	"sand_hunger": {
+		"type": "origins:conditioned_attribute",
+		"modifier": {
+			"attribute": "minecraft:generic.attack_damage",
+			"operation": "multiply_base",
+			"value": -0.5,
+			"name": "Hunger for Sand"
+		},
+		"tick_rate": 20,
+		"condition": {
+			"type": "origins:or",
+			"conditions": [
+				{
+					"type": "origins:on_block",
+					"block_condition": {
+						"type": "origins:in_tag",
+						"tag": "minecraft:sand"
+					}
+				},
+				{
+					"type": "origins:in_block",
+					"block_condition": {
+						"type": "origins:or",
+						"conditions": [
+							{
+								"type": "origins:block",
+								"block": "minecraft:sand"
+							},
+							{
+								"type": "origins:offset",
+								"condition": {
+									"type": "origins:block",
+									"block": "minecraft:sand"
+								},
+								"y": 1
+							}
+						]
+					}
+				}
+			],
+			"inverted": true
+		}
+	},
+	"sand_hunger_visual": {
+		"type": "origins:particle",
+		"particle": {
+			"type": "minecraft:falling_dust",
+			"params": "minecraft:sand"
+		},
+		"frequency": 4,
+		"condition": {
+			"type": "origins:or",
+			"conditions": [
+				{
+					"type": "origins:on_block",
+					"block_condition": {
+						"type": "origins:in_tag",
+						"tag": "minecraft:sand"
+					}
+				},
+				{
+					"type": "origins:in_block",
+					"block_condition": {
+						"type": "origins:or",
+						"conditions": [
+							{
+								"type": "origins:block",
+								"block": "minecraft:sand"
+							},
+							{
+								"type": "origins:offset",
+								"condition": {
+									"type": "origins:block",
+									"block": "minecraft:sand"
+								},
+								"y": 1
+							}
+						]
+					}
+				}
+			],
+			"inverted": true
+		}
+	},
+	"desert" : {
+	  "type": "origins:modify_player_spawn",
+	  "dimension": "minecraft:overworld",
+	  "biome": "minecraft:desert",
+	  "spawn_strategy": "center"
+	},
+  "name": "One with the Sand",
+  "description": "Take less damage when standing on top of sand blocks but only deal 50% of damage when on anything other than sand. In addition, you will always spawn in a desert."
+}

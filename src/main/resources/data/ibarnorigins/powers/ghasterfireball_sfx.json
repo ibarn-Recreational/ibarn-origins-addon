@@ -1,0 +1,18 @@
+{
+  "type": "origins:active_self",
+  "entity_action": {
+    "type": "origins:play_sound",
+    "sound": "minecraft:entity.ghast.shoot",
+    "volume": 1.0,
+    "pitch": 1.0
+  },
+  "key": {
+    "key": "key.origins.primary_active",
+    "continuous": false
+  },
+  "cooldown": 60,
+  "hud_render": {
+    "should_render": false
+  },
+  "hidden": true
+}

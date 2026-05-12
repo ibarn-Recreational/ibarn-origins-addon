@@ -1,0 +1,22 @@
+{
+	"powers": [
+		"ibarnorigins:wphit",
+		"origins:fall_immunity",
+		"ibarnorigins:witherskull",
+		"origins:slow_falling",
+		"ibarnorigins:wpairswim",
+		"ibarnorigins:wpappearance",
+		"ibarnorigins:wphealth",
+		"ibarnorigins:wp_item_prevention",
+		"origins:nether_spawn",
+		"ibarnorigins:wpantiwither",
+		"ibarnorigins:wpparticles",
+		"ibarnorigins:wpskullimmun",
+		"ibarnorigins:witherskull_sfx"
+	],
+	"icon": "minecraft:wither_skeleton_skull",
+	"order": 5,
+	"impact": 3,
+	"name": "Wither Wraith",
+	"description": "Ancient half-living half-undead amalgamates who became permanently infused with withering powers as a result of fusions with wither cores."
+}

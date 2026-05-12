@@ -1,0 +1,33 @@
+{
+	"type": "origins:multiple",
+	"magic": {
+		"type": "origins:modify_damage_taken",
+		"damage_condition": {
+			"type": "origins:in_tag",
+			"tag": "minecraft:witch_resistant_to"
+		},
+		"modifier": {
+			"operation": "multiply_total",
+			"value": -0.75
+		}
+	},
+	"soul_fire_ball": {
+		"type": "origins:modify_damage_taken",
+		"damage_condition": {
+			"type": "origins:name",
+			"name": "soul_blast"
+		},
+		"modifier": {
+			"operation": "multiply_total",
+			"value": -0.9
+		}
+	},
+	"soul_burning_immunity": {
+		"type": "origins:effect_immunity",
+		"effects": [
+			"ibarnorigins:soul_fire_effect"
+		]
+	},
+	"name": "Ki Resistance",
+	"description": "You have a strong resistance to magic damage."
+}

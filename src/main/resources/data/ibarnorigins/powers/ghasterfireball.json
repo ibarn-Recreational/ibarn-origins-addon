@@ -1,0 +1,18 @@
+{
+  "type": "origins:fire_projectile",
+  "cooldown": 60,
+  "hud_render": {
+    "should_render": true,
+    "sprite_location": "origins:textures/gui/resource_bar.png",
+    "bar_index":7
+  },
+  "entity_type":"minecraft:small_fireball",
+  "count":1,
+  "speed": 0.1,
+  "key": {
+    "key": "key.origins.primary_active",
+    "continuous": false
+  },
+  "name": "Fireball Instantiation",
+  "description": "Though you were left exposed to the Overworld, you have retained the vital fireballing ability of your ancestors, to a certain extent at least."
+}

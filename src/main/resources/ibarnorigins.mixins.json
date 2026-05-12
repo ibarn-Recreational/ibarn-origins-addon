@@ -1,0 +1,28 @@
+{
+  "required": true,
+  "package": "com.ibarnstormer.ibarnorigins.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractFireBlockMixin",
+    "CampfireBlockMixin",
+    "FoodComponentMixin",
+    "LivingEntityMixin",
+    "PiglinBrainMixin",
+    "ServerPlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "BatchingRenderCommandQueueMixin",
+    "BipedEntityModelMixin",
+    "EntityRendererMixin",
+    "FireCommandMixin",
+    "FireCommandRendererMixin",
+    "InGameOverlayRendererMixin",
+    "LivingEntityRendererMixin"
+  ]
+}
