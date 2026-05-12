@@ -80,6 +80,7 @@ public class SoulFireBallEntity extends ExplosiveProjectileEntity {
             areaEffectCloudEntity.setParticleType(IOParticles.SOUL_MAGE_FLAME.get());
             areaEffectCloudEntity.setWaitTime(0);
             areaEffectCloudEntity.setOwner(this.getOwner() instanceof LivingEntity le ? le : null);
+            ((IExtendedAECEntity) areaEffectCloudEntity).setToAssignOwnableEffects(true);
 
             if(entity instanceof PlayerEntity player) {
                 float exp_mult = player.experienceLevel;
