@@ -1,6 +1,6 @@
 package com.ibarnstormer.ibarnorigins;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class IbarnOriginsMain {
 	
@@ -9,7 +9,7 @@ public class IbarnOriginsMain {
     public static void init() {}
 
     public static Identifier IOIdentifier(String name) {
-        return Identifier.of(MODID, name);
+        return Identifier.fromNamespaceAndPath(MODID, name);
     }
 
 }

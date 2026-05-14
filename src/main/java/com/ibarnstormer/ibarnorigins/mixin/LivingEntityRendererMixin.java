@@ -3,39 +3,32 @@ package com.ibarnstormer.ibarnorigins.mixin;
 import com.ibarnstormer.ibarnorigins.client.render.entity.state.InflationRenderState;
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.BlockTags;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntityRenderer.class)
 public class LivingEntityRendererMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> {
 
-    @Inject(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;scale(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;)V"))
-    public void livingEntityRenderer$render(S livingEntityRenderState, MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, CameraRenderState cameraRenderState, CallbackInfo ci) {
-        InflationRenderState inflationRenderState =  livingEntityRenderState.getData(InflationRenderState.KEY);
+    @Inject(method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/LivingEntityRenderer;scale(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;)V"))
+    public void livingEntityRenderer$render(S state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, net.minecraft.client.renderer.state.level.CameraRenderState camera, CallbackInfo ci) {
+        InflationRenderState inflationRenderState =  state.getData(InflationRenderState.KEY);
         if(inflationRenderState != null && inflationRenderState.renderInflated) {
-            matrixStack.scale(1.15F, 1.05F, 1.15F);
+            poseStack.scale(1.15F, 1.05F, 1.15F);
         }
     }
 
-    @Inject(method = "updateRenderState(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;F)V", at = @At("TAIL"))
+    @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("TAIL"))
     private void livingEntityRenderer$updateRenderState(T livingEntity, S livingEntityRenderState, float f, CallbackInfo ci) {
-        livingEntityRenderState.shaking = livingEntityRenderState.shaking || (livingEntity instanceof IbarnOriginsEntity ioe && (ioe.fireWeaknessShaking() || (ioe.isSandPerson() && !livingEntity.getEntityWorld().getBlockState(livingEntity.getBlockPos()).isIn(BlockTags.SAND) && !livingEntity.getEntityWorld().getBlockState(livingEntity.getBlockPos().down()).isIn(BlockTags.SAND))));
+        livingEntityRenderState.isFullyFrozen = livingEntityRenderState.isFullyFrozen || (livingEntity instanceof IbarnOriginsEntity ioe && (ioe.fireWeaknessShaking() || (ioe.isSandPerson() && !livingEntity.level().getBlockState(livingEntity.blockPosition()).is(BlockTags.SAND) && !livingEntity.level().getBlockState(livingEntity.blockPosition().below()).is(BlockTags.SAND))));
     }
 
 }

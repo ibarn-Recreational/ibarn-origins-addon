@@ -8,39 +8,6 @@ import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import com.ibarnstormer.ibarnorigins.registry.IOParticles;
 import com.ibarnstormer.ibarnorigins.utils.IOUtils;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CampfireBlock;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -54,165 +21,198 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
 import java.util.Map;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEntity {
 
-    @Shadow public abstract float getBodyYaw();
-    @Shadow public abstract void setBodyYaw(float bodyYaw);
-    @Shadow public abstract float getHeadYaw();
-    @Shadow public abstract boolean addStatusEffect(StatusEffectInstance effect);
-    @Shadow public abstract boolean isInsideWall();
-    @Shadow @Final private Map<RegistryEntry<StatusEffect>, StatusEffectInstance> activeStatusEffects;
-    @Shadow protected abstract void onStatusEffectApplied(StatusEffectInstance effect, @Nullable Entity source);
-    @Shadow protected abstract void onStatusEffectUpgraded(StatusEffectInstance effect, boolean reapplyEffect, @Nullable Entity source);
+    @Shadow public abstract float getVisualRotationYInDegrees();
+    @Shadow public abstract void setYBodyRot(float bodyYaw);
+    @Shadow public abstract float getYHeadRot();
+    @Shadow public abstract boolean addEffect(MobEffectInstance effect);
+    @Shadow public abstract boolean isInWall();
+    @Shadow @Final private Map<Holder<MobEffect>, MobEffectInstance> activeEffects;
+    @Shadow protected abstract void onEffectAdded(MobEffectInstance effect, @Nullable Entity source);
+    @Shadow protected abstract void onEffectUpdated(MobEffectInstance effect, boolean reapplyEffect, @Nullable Entity source);
     @Shadow @Nullable private DamageSource lastDamageSource;
-    @Shadow private long lastDamageTime;
-    @Shadow public abstract boolean hasStatusEffect(RegistryEntry<StatusEffect> effect);
+    @Shadow private long lastDamageStamp;
+    @Shadow public abstract boolean hasEffect(Holder<MobEffect> effect);
 
     @Shadow
-    public abstract @Nullable LivingEntity getEntity();
+    public abstract @Nullable LivingEntity asLivingEntity();
 
     @Unique
-    private StatusEffectInstance soulBurning = null;
+    private MobEffectInstance soulBurning = null;
 
     @Unique
     private final Identifier soulSpeedID = IbarnOriginsMain.IOIdentifier("soul_speed");
 
     @Unique
-    private static final TrackedData<Integer> SPELL_CASTING_TICKS = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final EntityDataAccessor<Integer> SPELL_CASTING_TICKS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
     @Unique
-    private static final TrackedData<Boolean> IS_SOUL_MAGE = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_SOUL_MAGE = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
     @Unique
-    private static final TrackedData<Boolean> IS_SAND_PERSON = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_SAND_PERSON = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
     @Unique
-    private static final TrackedData<Boolean> IS_ON_SOUL_MAGE_FIRE = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_ON_SOUL_MAGE_FIRE = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
     @Unique
-    private static final TrackedData<Boolean> IS_ON_SOUL_FIRE = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_ON_SOUL_FIRE = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
     @Unique
-    private static final TrackedData<Boolean> IS_INFLATED = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_INFLATED = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
     @Unique
-    private static final TrackedData<Boolean> IS_SHAKING_FROM_FIRE_WEAKNESS = DataTracker.registerData(LivingEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_SHAKING_FROM_FIRE_WEAKNESS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
 
 
-    public LivingEntityMixin(EntityType<?> type, World world) {
+    public LivingEntityMixin(EntityType<?> type, Level world) {
         super(type, world);
     }
 
     @Unique
     public void setSpellCastTicks(int i) {
-        this.dataTracker.set(SPELL_CASTING_TICKS, i);
+        this.entityData.set(SPELL_CASTING_TICKS, i);
     }
 
     @Unique
     public int getSpellCastTicks() {
-        return this.dataTracker.get(SPELL_CASTING_TICKS);
+        return this.entityData.get(SPELL_CASTING_TICKS);
     }
 
     @Unique
     public boolean isSoulMage() {
-        return this.dataTracker.get(IS_SOUL_MAGE);
+        return this.entityData.get(IS_SOUL_MAGE);
     }
 
     @Unique
     public void setSoulMage(boolean b) {
-        this.dataTracker.set(IS_SOUL_MAGE, b);
+        this.entityData.set(IS_SOUL_MAGE, b);
     }
 
     @Unique
     public boolean isSandPerson() {
-        return this.dataTracker.get(IS_SAND_PERSON);
+        return this.entityData.get(IS_SAND_PERSON);
     }
 
     @Unique
     public void setSandPerson(boolean b) {
-        this.dataTracker.set(IS_SAND_PERSON, b);
+        this.entityData.set(IS_SAND_PERSON, b);
     }
 
     @Unique
     public boolean onSoulMageFire() {
-        return this.dataTracker.get(IS_ON_SOUL_MAGE_FIRE);
+        return this.entityData.get(IS_ON_SOUL_MAGE_FIRE);
     }
 
     @Unique
     public void setOnSoulMageFire(boolean b) {
-        this.dataTracker.set(IS_ON_SOUL_MAGE_FIRE, b);
+        this.entityData.set(IS_ON_SOUL_MAGE_FIRE, b);
     }
 
     @Unique
     public boolean onSoulFire() {
-        return this.dataTracker.get(IS_ON_SOUL_FIRE);
+        return this.entityData.get(IS_ON_SOUL_FIRE);
     }
 
     @Unique
     public void setOnSoulFire(boolean b) {
-        this.dataTracker.set(IS_ON_SOUL_FIRE, b);
+        this.entityData.set(IS_ON_SOUL_FIRE, b);
     }
 
     @Unique
     public boolean inflated() {
-        return this.dataTracker.get(IS_INFLATED);
+        return this.entityData.get(IS_INFLATED);
     }
 
     @Unique
     public void setInflated(boolean b) {
-        this.dataTracker.set(IS_INFLATED, b);
+        this.entityData.set(IS_INFLATED, b);
     }
 
     @Unique
     public boolean fireWeaknessShaking() {
-        return this.dataTracker.get(IS_SHAKING_FROM_FIRE_WEAKNESS);
+        return this.entityData.get(IS_SHAKING_FROM_FIRE_WEAKNESS);
     }
 
     @Unique
     public void setShakingFromFireWeakness(boolean b) {
-        this.dataTracker.set(IS_SHAKING_FROM_FIRE_WEAKNESS, b);
+        this.entityData.set(IS_SHAKING_FROM_FIRE_WEAKNESS, b);
     }
 
     @Unique
     private boolean isOnSoulSpeedBlock() {
-        return this.getEntityWorld().getBlockState(this.getVelocityAffectingPos()).isIn(BlockTags.SOUL_SPEED_BLOCKS);
+        return this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).is(BlockTags.SOUL_SPEED_BLOCKS);
     }
 
     @Unique
     protected void displaySoulSpeedEffects() {
-        Vec3d vec3d = this.getVelocity();
-        this.getEntityWorld().addParticleClient(ParticleTypes.SOUL, this.getX() + (this.random.nextDouble() - (double)0.5F) * (double)this.getWidth(), this.getY() + 0.1, this.getZ() + (this.random.nextDouble() - (double)0.5F) * (double)this.getWidth(), vec3d.x * -0.2, 0.1, vec3d.z * -0.2);
+        Vec3 vec3d = this.getDeltaMovement();
+        this.level().addParticle(ParticleTypes.SOUL, this.getX() + (this.random.nextDouble() - (double)0.5F) * (double)this.getBbWidth(), this.getY() + 0.1, this.getZ() + (this.random.nextDouble() - (double)0.5F) * (double)this.getBbWidth(), vec3d.x * -0.2, 0.1, vec3d.z * -0.2);
         float f = this.random.nextFloat() * 0.4F + this.random.nextFloat() > 0.9F ? 0.6F : 0.0F;
-        this.playSound(SoundEvents.PARTICLE_SOUL_ESCAPE.value(), f, 0.6F + this.random.nextFloat() * 0.4F);
+        this.playSound(SoundEvents.SOUL_ESCAPE.value(), f, 0.6F + this.random.nextFloat() * 0.4F);
     }
 
-    @Inject(method = "initDataTracker", at = @At("TAIL"))
-    private void livingEntity$initDataTracker(DataTracker.Builder builder, CallbackInfo ci) {
-        builder.add(SPELL_CASTING_TICKS, 0);
-        builder.add(IS_SOUL_MAGE, false);
-        builder.add(IS_SAND_PERSON, false);
-        builder.add(IS_ON_SOUL_MAGE_FIRE, false);
-        builder.add(IS_ON_SOUL_FIRE, false);
-        builder.add(IS_INFLATED, false);
-        builder.add(IS_SHAKING_FROM_FIRE_WEAKNESS, false);
+    @Inject(method = "defineSynchedData", at = @At("TAIL"))
+    private void livingEntity$initDataTracker(SynchedEntityData.Builder builder, CallbackInfo ci) {
+        builder.define(SPELL_CASTING_TICKS, 0);
+        builder.define(IS_SOUL_MAGE, false);
+        builder.define(IS_SAND_PERSON, false);
+        builder.define(IS_ON_SOUL_MAGE_FIRE, false);
+        builder.define(IS_ON_SOUL_FIRE, false);
+        builder.define(IS_INFLATED, false);
+        builder.define(IS_SHAKING_FROM_FIRE_WEAKNESS, false);
     }
 
-    @Inject(method = "writeCustomData", at = @At("TAIL"))
-    private void livingEntity$writeCustomData(WriteView view, CallbackInfo ci) {
-        view.putInt("spellCastTicks", this.dataTracker.get(SPELL_CASTING_TICKS));
-        view.putBoolean("isSoulMage", this.dataTracker.get(IS_SOUL_MAGE));
-        view.putBoolean("isSandPerson", this.dataTracker.get(IS_SAND_PERSON));
-        view.putBoolean("onSoulMageFire", this.dataTracker.get(IS_ON_SOUL_MAGE_FIRE));
-        view.putBoolean("onSoulFire", this.dataTracker.get(IS_ON_SOUL_FIRE));
-        view.putBoolean("isInflated", this.dataTracker.get(IS_INFLATED));
-        view.putBoolean("isShakingFromFireWeakness", this.dataTracker.get(IS_SHAKING_FROM_FIRE_WEAKNESS));
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void livingEntity$writeCustomData(ValueOutput view, CallbackInfo ci) {
+        view.putInt("spellCastTicks", this.entityData.get(SPELL_CASTING_TICKS));
+        view.putBoolean("isSoulMage", this.entityData.get(IS_SOUL_MAGE));
+        view.putBoolean("isSandPerson", this.entityData.get(IS_SAND_PERSON));
+        view.putBoolean("onSoulMageFire", this.entityData.get(IS_ON_SOUL_MAGE_FIRE));
+        view.putBoolean("onSoulFire", this.entityData.get(IS_ON_SOUL_FIRE));
+        view.putBoolean("isInflated", this.entityData.get(IS_INFLATED));
+        view.putBoolean("isShakingFromFireWeakness", this.entityData.get(IS_SHAKING_FROM_FIRE_WEAKNESS));
     }
 
-    @Inject(method = "readCustomData", at = @At("TAIL"))
-    private void livingEntity$readCustomData(ReadView view, CallbackInfo ci) {
-        this.dataTracker.set(SPELL_CASTING_TICKS, view.getInt("spellCastTicks", 0));
-        this.dataTracker.set(IS_SOUL_MAGE, view.getBoolean("isSoulMage", false));
-        this.dataTracker.set(IS_SAND_PERSON, view.getBoolean("isSandPerson", false));
-        this.dataTracker.set(IS_ON_SOUL_MAGE_FIRE, view.getBoolean("onSoulMageFire", false));
-        this.dataTracker.set(IS_ON_SOUL_FIRE, view.getBoolean("onSoulFire", false));
-        this.dataTracker.set(IS_INFLATED, view.getBoolean("isInflated", false));
-        this.dataTracker.set(IS_SHAKING_FROM_FIRE_WEAKNESS, view.getBoolean("isShakingFromFireWeakness", false));
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void livingEntity$readCustomData(ValueInput view, CallbackInfo ci) {
+        this.entityData.set(SPELL_CASTING_TICKS, view.getIntOr("spellCastTicks", 0));
+        this.entityData.set(IS_SOUL_MAGE, view.getBooleanOr("isSoulMage", false));
+        this.entityData.set(IS_SAND_PERSON, view.getBooleanOr("isSandPerson", false));
+        this.entityData.set(IS_ON_SOUL_MAGE_FIRE, view.getBooleanOr("onSoulMageFire", false));
+        this.entityData.set(IS_ON_SOUL_FIRE, view.getBooleanOr("onSoulFire", false));
+        this.entityData.set(IS_INFLATED, view.getBooleanOr("isInflated", false));
+        this.entityData.set(IS_SHAKING_FROM_FIRE_WEAKNESS, view.getBooleanOr("isShakingFromFireWeakness", false));
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
@@ -221,35 +221,35 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
         if(spellCastTicks > 0) {
             this.setSpellCastTicks(spellCastTicks - 1);
-            this.setBodyYaw(this.getHeadYaw());
+            this.setYBodyRot(this.getYHeadRot());
 
-            if(this.getEntityWorld().isClient()) {
+            if(this.level().isClientSide()) {
 
-                float g = this.getBodyYaw() * 0.017453292F + MathHelper.cos((float)this.age * 0.6662F) * 0.25F;
-                float h = MathHelper.cos(g);
-                float i = MathHelper.sin(g);
+                float g = this.getVisualRotationYInDegrees() * 0.017453292F + Mth.cos((float)this.tickCount * 0.6662F) * 0.25F;
+                float h = Mth.cos(g);
+                float i = Mth.sin(g);
 
-                int xDelta = this.getEntityWorld().getRandom().nextBetween(-1, 1);
-                int yDelta = this.getEntityWorld().getRandom().nextBetween(-1, 1);
-                int zDelta = this.getEntityWorld().getRandom().nextBetween(-1, 1);
+                int xDelta = this.level().getRandom().nextIntBetweenInclusive(-1, 1);
+                int yDelta = this.level().getRandom().nextIntBetweenInclusive(-1, 1);
+                int zDelta = this.level().getRandom().nextIntBetweenInclusive(-1, 1);
 
-                this.getEntityWorld().addParticleClient(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() + (double)h * 0.6, this.getY() + this.getBoundingBox().getLengthY() + 0.2, this.getZ() + (double)i * 0.6, 0.025 * xDelta, 0.01 * yDelta, 0.02 * zDelta);
-                this.getEntityWorld().addParticleClient(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() - (double)h * 0.6, this.getY() + this.getBoundingBox().getLengthY() + 0.2, this.getZ() - (double)i * 0.6, 0.025 * xDelta, 0.01 * yDelta, 0.02 * zDelta);
+                this.level().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() + (double)h * 0.6, this.getY() + this.getBoundingBox().getYsize() + 0.2, this.getZ() + (double)i * 0.6, 0.025 * xDelta, 0.01 * yDelta, 0.02 * zDelta);
+                this.level().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() - (double)h * 0.6, this.getY() + this.getBoundingBox().getYsize() + 0.2, this.getZ() - (double)i * 0.6, 0.025 * xDelta, 0.01 * yDelta, 0.02 * zDelta);
             }
         }
 
         // Inflation effect
-        if(this.hasStatusEffect(IOEffects.INFLATION.getRef()) && this.isSneaking()) {
-            this.addVelocity(this.getRotationVector().x * 0.035, -0.06, this.getRotationVector().z * 0.035);
-            this.velocityDirty = true;
+        if(this.hasEffect(IOEffects.INFLATION.getRef()) && this.isShiftKeyDown()) {
+            this.push(this.getLookAngle().x * 0.035, -0.06, this.getLookAngle().z * 0.035);
+            this.needsSync = true;
         }
 
         // Soul Mage built-in abilities
         if(this.isSoulMage()) {
 
-            if(this.age % 20 == 0 && !this.getEntityWorld().isClient()) {
+            if(this.tickCount % 20 == 0 && !this.level().isClientSide()) {
                 // Optimized hardcoded power for fire / soul fire detection
-                TagKey<Block> fire = TagKey.of(RegistryKeys.BLOCK, Identifier.of("ibarnorigins", "fire"));
+                TagKey<Block> fire = TagKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath("ibarnorigins", "fire"));
 
                 boolean foundSoulFire = false;
                 boolean foundFire = false;
@@ -257,10 +257,10 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
                 for(int x = this.getBlockX() - 5; x < this.getBlockX() + 5; x++) {
                     for(int y = this.getBlockY() - 5; y < this.getBlockY() + 5; y++) {
                         for(int z = this.getBlockZ() - 5; z < this.getBlockZ() + 5; z++) {
-                            BlockState block = this.getEntityWorld().getBlockState(new BlockPos(x, y, z));
+                            BlockState block = this.level().getBlockState(new BlockPos(x, y, z));
                             try {
-                                if(!foundSoulFire) foundSoulFire = (block.isIn(BlockTags.PIGLIN_REPELLENTS) && !block.isOf(Blocks.SOUL_CAMPFIRE)) || (block.isOf(Blocks.SOUL_CAMPFIRE) && block.get(CampfireBlock.LIT).equals(true));
-                                if(!foundFire) foundFire = block.isIn(fire) || (block.isOf(Blocks.CAMPFIRE) && block.get(CampfireBlock.LIT).equals(true));
+                                if(!foundSoulFire) foundSoulFire = (block.is(BlockTags.PIGLIN_REPELLENTS) && !block.is(Blocks.SOUL_CAMPFIRE)) || (block.is(Blocks.SOUL_CAMPFIRE) && block.getValue(CampfireBlock.LIT).equals(true));
+                                if(!foundFire) foundFire = block.is(fire) || (block.is(Blocks.CAMPFIRE) && block.getValue(CampfireBlock.LIT).equals(true));
                             }
                             catch(Exception ignored) {}
 
@@ -272,81 +272,81 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
                 }
 
                 if(foundSoulFire) {
-                    this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.getRef(), 30, 0, true, false, true));
+                    this.addEffect(new MobEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.getRef(), 30, 0, true, false, true));
                 }
 
                 if(foundFire) {
-                    this.addStatusEffect(new StatusEffectInstance(IOEffects.FIRE_WEAKNESS.getRef(), 30, 0, true, false, true));
-                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.MINING_FATIGUE, 30, 0, false, false, false));
+                    this.addEffect(new MobEffectInstance(IOEffects.FIRE_WEAKNESS.getRef(), 30, 0, true, false, true));
+                    this.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 30, 0, false, false, false));
                 }
 
             }
 
-            if(this.getEntityWorld().isClient()) {
+            if(this.level().isClientSide()) {
                 // Particles
-                if(this.hasStatusEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef()) && this.age % 4 == 0) {
-                    IOUtils.renderParticles(this.getEntityWorld(), (LivingEntity) (Object) this, ParticleTypes.SOUL_FIRE_FLAME);
+                if(this.hasEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef()) && this.tickCount % 4 == 0) {
+                    IOUtils.renderParticles(this.level(), (LivingEntity) (Object) this, ParticleTypes.SOUL_FIRE_FLAME);
                 }
 
-                if(this.isOnSoulSpeedBlock() && this.age % 5 == 0 && this.getVelocity().x != 0.0 && this.getVelocity().z != 0.0) {
+                if(this.isOnSoulSpeedBlock() && this.tickCount % 5 == 0 && this.getDeltaMovement().x != 0.0 && this.getDeltaMovement().z != 0.0) {
                     this.displaySoulSpeedEffects();
                 }
             }
 
             if(this.isOnSoulSpeedBlock()) {
-                EntityAttributeInstance entityAttributeInstance = this.getEntity().getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+                AttributeInstance entityAttributeInstance = this.asLivingEntity().getAttribute(Attributes.MOVEMENT_SPEED);
                 if (entityAttributeInstance != null && !entityAttributeInstance.hasModifier(soulSpeedID)) {
-                    entityAttributeInstance.addTemporaryModifier(new EntityAttributeModifier(soulSpeedID, 0.03F * (1.0F + (float) 3 * 0.35F), EntityAttributeModifier.Operation.ADD_VALUE));
+                    entityAttributeInstance.addTransientModifier(new AttributeModifier(soulSpeedID, 0.03F * (1.0F + (float) 3 * 0.35F), AttributeModifier.Operation.ADD_VALUE));
                 }
             }
             else {
-                EntityAttributeInstance entityAttributeInstance = this.getEntity().getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
-                if (entityAttributeInstance != null && entityAttributeInstance.hasModifier(soulSpeedID) && (!this.getEntityWorld().getBlockState(this.getSteppingPos()).isAir() || this.getEntity().isGliding())) {
+                AttributeInstance entityAttributeInstance = this.asLivingEntity().getAttribute(Attributes.MOVEMENT_SPEED);
+                if (entityAttributeInstance != null && entityAttributeInstance.hasModifier(soulSpeedID) && (!this.level().getBlockState(this.getOnPos()).isAir() || this.asLivingEntity().isFallFlying())) {
                     entityAttributeInstance.removeModifier(soulSpeedID);
                 }
             }
 
-            if(this.getEntityWorld().getBlockState(this.getVelocityAffectingPos()).isOf(Blocks.SOUL_FIRE) || this.getEntityWorld().getBlockState(this.getBlockPos()).isOf(Blocks.SOUL_FIRE)) {
-                this.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.getRef(), 60, 1, true, false, true));
-                this.setFireTicks(0);
-                this.setOnFire(false);
+            if(this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).is(Blocks.SOUL_FIRE) || this.level().getBlockState(this.blockPosition()).is(Blocks.SOUL_FIRE)) {
+                this.addEffect(new MobEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.getRef(), 60, 1, true, false, true));
+                this.setRemainingFireTicks(0);
+                this.setSharedFlagOnFire(false);
             }
 
-            if(this.lastDamageSource != null && this.lastDamageSource.isIn(DamageTypeTags.IS_FIRE) && this.getEntityWorld().getTime() - this.lastDamageTime <= 2 && !this.getEntityWorld().isClient()) {
-                this.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 50, 0, true, false, false));
+            if(this.lastDamageSource != null && this.lastDamageSource.is(DamageTypeTags.IS_FIRE) && this.level().getGameTime() - this.lastDamageStamp <= 2 && !this.level().isClientSide()) {
+                this.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 50, 0, true, false, false));
             }
         }
 
         // Sand Person built-in abilities
         if(this.isSandPerson()) {
-            if((this.getEntityWorld().getBlockState(this.getVelocityAffectingPos()).isIn(BlockTags.SAND) || this.getEntityWorld().getBlockState(this.getBlockPos()).isIn(BlockTags.SAND)) && !this.getEntityWorld().isClient()) {
-                this.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 20, 2, true, false, true));
-                if(this.getEntityWorld().getBlockState(this.getBlockPos().up()).isIn(BlockTags.SAND)) {
-                    this.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 10, 2, true, false, true));
+            if((this.level().getBlockState(this.getBlockPosBelowThatAffectsMyMovement()).is(BlockTags.SAND) || this.level().getBlockState(this.blockPosition()).is(BlockTags.SAND)) && !this.level().isClientSide()) {
+                this.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 20, 2, true, false, true));
+                if(this.level().getBlockState(this.blockPosition().above()).is(BlockTags.SAND)) {
+                    this.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 2, true, false, true));
                 }
             }
         }
     }
 
-    @Inject(method = "addStatusEffect(Lnet/minecraft/entity/effect/StatusEffectInstance;Lnet/minecraft/entity/Entity;)Z", at = @At(value = "HEAD"), cancellable = true)
-    public void livingEntity$addStatusEffect(StatusEffectInstance effect, Entity source, CallbackInfoReturnable<Boolean> cir) {
-        if(effect.getEffectType() == IOEffects.SOUL_FIRE.getRef()) {
+    @Inject(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At(value = "HEAD"), cancellable = true)
+    public void livingEntity$addStatusEffect(MobEffectInstance effect, Entity source, CallbackInfoReturnable<Boolean> cir) {
+        if(effect.getEffect() == IOEffects.SOUL_FIRE.getRef()) {
             if(!this.isSoulMage()) {
                 try {
-                    StatusEffectInstance statusEffectInstance = this.activeStatusEffects.get(IOEffects.SOUL_FIRE.getRef());
+                    MobEffectInstance statusEffectInstance = this.activeEffects.get(IOEffects.SOUL_FIRE.getRef());
                     if (statusEffectInstance == null) {
-                        this.activeStatusEffects.put(effect.getEffectType(), effect);
-                        this.onStatusEffectApplied(effect, source);
+                        this.activeEffects.put(effect.getEffect(), effect);
+                        this.onEffectAdded(effect, source);
 
-                        effect.onApplied(this.getEntity());
+                        effect.onEffectStarted(this.asLivingEntity());
                         cir.setReturnValue(true);
-                    } else if (statusEffectInstance.upgrade(effect)) {
-                        this.onStatusEffectUpgraded(statusEffectInstance, true, source);
+                    } else if (statusEffectInstance.update(effect)) {
+                        this.onEffectUpdated(statusEffectInstance, true, source);
 
-                        effect.onApplied(this.getEntity());
+                        effect.onEffectStarted(this.asLivingEntity());
                         cir.setReturnValue(true);
                     } else {
-                        effect.onApplied(this.getEntity());
+                        effect.onEffectStarted(this.asLivingEntity());
                         cir.setReturnValue(false);
                     }
                 } catch (Exception ignored) {
@@ -359,37 +359,37 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
         }
     }
 
-    @Inject(method = "clearStatusEffects", at = @At("HEAD"))
+    @Inject(method = "removeAllEffects", at = @At("HEAD"))
     public void livingEntity$clearStatusEffects_HEAD(CallbackInfoReturnable<Boolean> cir) {
         LivingEntity thisEntity = (LivingEntity) (Object) this;
-        if(this.activeStatusEffects.containsKey(IOEffects.SOUL_FIRE.getRef()) && (!this.isSoulMage() && !(thisEntity instanceof PlayerEntity player && player.isCreative()))) {
-            this.soulBurning = this.activeStatusEffects.get(IOEffects.SOUL_FIRE.getRef());
+        if(this.activeEffects.containsKey(IOEffects.SOUL_FIRE.getRef()) && (!this.isSoulMage() && !(thisEntity instanceof Player player && player.isCreative()))) {
+            this.soulBurning = this.activeEffects.get(IOEffects.SOUL_FIRE.getRef());
         }
     }
 
-    @Inject(method = "clearStatusEffects", at = @At("TAIL"))
+    @Inject(method = "removeAllEffects", at = @At("TAIL"))
     public void livingEntity$clearStatusEffects_TAIL(CallbackInfoReturnable<Boolean> cir) {
         if(this.soulBurning != null) {
-            this.addStatusEffect(soulBurning);
+            this.addEffect(soulBurning);
             this.soulBurning = null;
         }
     }
 
-    @Inject(method = "onStatusEffectsRemoved", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"))
-    private void livingEntity$onStatusEffectsRemoved(Collection<StatusEffectInstance> effects, CallbackInfo ci, @Local StatusEffectInstance instance) {
-        if(instance.getEffectType().value() instanceof IExtendedStatusEffect extendedInstance && this.getEntity() != null && this.getEntity().getEntityWorld() instanceof ServerWorld serverWorld) {
-            extendedInstance.onStatusEffectRemoved(serverWorld, this.getEntity(), instance.getAmplifier());
+    @Inject(method = "onEffectsRemoved", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffect;removeAttributeModifiers(Lnet/minecraft/world/entity/ai/attributes/AttributeMap;)V"))
+    private void livingEntity$onStatusEffectsRemoved(Collection<MobEffectInstance> effects, CallbackInfo ci, @Local MobEffectInstance instance) {
+        if(instance.getEffect().value() instanceof IExtendedStatusEffect extendedInstance && this.asLivingEntity() != null && this.asLivingEntity().level() instanceof ServerLevel serverWorld) {
+            extendedInstance.onStatusEffectRemoved(serverWorld, this.asLivingEntity(), instance.getAmplifier());
         }
     }
 
-    @Inject(method = "onStatusEffectUpgraded", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V"))
-    private void livingEntity$onStatusEffectUpgraded(StatusEffectInstance instance, boolean reapplyEffect, Entity source, CallbackInfo ci) {
-        if(instance.getEffectType().value() instanceof IExtendedStatusEffect extendedInstance && this.getEntity() != null && this.getEntity().getEntityWorld() instanceof ServerWorld serverWorld) {
-            extendedInstance.onStatusEffectRemoved(serverWorld, this.getEntity(), instance.getAmplifier());
+    @Inject(method = "onEffectUpdated", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/effect/MobEffect;removeAttributeModifiers(Lnet/minecraft/world/entity/ai/attributes/AttributeMap;)V"))
+    private void livingEntity$onStatusEffectUpgraded(MobEffectInstance instance, boolean reapplyEffect, Entity source, CallbackInfo ci) {
+        if(instance.getEffect().value() instanceof IExtendedStatusEffect extendedInstance && this.asLivingEntity() != null && this.asLivingEntity().level() instanceof ServerLevel serverWorld) {
+            extendedInstance.onStatusEffectRemoved(serverWorld, this.asLivingEntity(), instance.getAmplifier());
         }
     }
 
-    @Inject(method = "getVelocityMultiplier", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getBlockSpeedFactor", at = @At("RETURN"), cancellable = true)
     public void modulateVelocityMultiplier(CallbackInfoReturnable<Float> cir) {
         if(this.isSoulMage() && isOnSoulSpeedBlock()) cir.setReturnValue(1.0F);
     }

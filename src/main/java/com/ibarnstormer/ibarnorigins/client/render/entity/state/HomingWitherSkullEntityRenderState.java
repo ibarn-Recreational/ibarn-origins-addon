@@ -2,11 +2,11 @@ package com.ibarnstormer.ibarnorigins.client.render.entity.state;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
-import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.model.object.skull.SkullModelBase;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 
 @Environment(EnvType.CLIENT)
 public class HomingWitherSkullEntityRenderState extends EntityRenderState {
     public boolean charged;
-    public final SkullBlockEntityModel.SkullModelState skullState = new SkullBlockEntityModel.SkullModelState();
+    public final SkullModelBase.State skullState = new SkullModelBase.State();
 }

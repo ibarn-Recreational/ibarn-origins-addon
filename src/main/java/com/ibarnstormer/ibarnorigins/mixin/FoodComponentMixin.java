@@ -1,43 +1,43 @@
 package com.ibarnstormer.ibarnorigins.mixin;
 
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ConsumableComponent;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.ExperienceOrbEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.Consumable;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.Level;
 
-@Mixin(FoodComponent.class)
+@Mixin(FoodProperties.class)
 public class FoodComponentMixin {
 
     @Inject(method = "onConsume", at = @At("RETURN"))
-    public void foodComponent$onConsume(World world, LivingEntity user, ItemStack stack, ConsumableComponent consumable, CallbackInfo ci) {
+    public void foodComponent$onConsume(Level world, LivingEntity user, ItemStack stack, Consumable consumable, CallbackInfo ci) {
         if(user instanceof IbarnOriginsEntity ioe && ioe.isSoulMage()) {
             try {
-                FoodComponent food = stack.getItem().getComponents().get(DataComponentTypes.FOOD);
+                FoodProperties food = stack.getItem().components().get(DataComponents.FOOD);
 
                 if(food != null) {
-                    List<Recipe<?>> recipes = (List<Recipe<?>>) world.getRecipeManager().getSynchronizedRecipes().recipes().stream().filter(r -> r.value() == stack.getItem()).map(r -> r.value()).toList();
-                    TagKey<Item> meatTag = TagKey.of(RegistryKeys.ITEM, Identifier.of("origins", "meat"));
-                    boolean hasMeatInRecipe = recipes.stream().anyMatch(r -> r.getIngredientPlacement().getIngredients().stream().anyMatch(i -> i.getMatchingItems().anyMatch(is -> is.isIn(meatTag))));
+                    List<Recipe<?>> recipes = (List<Recipe<?>>) world.recipeAccess().getSynchronizedRecipes().recipes().stream().filter(r -> r.value() == stack.getItem()).map(r -> r.value()).toList();
+                    TagKey<Item> meatTag = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("origins", "meat"));
+                    boolean hasMeatInRecipe = recipes.stream().anyMatch(r -> r.placementInfo().ingredients().stream().anyMatch(i -> i.items().anyMatch(is -> is.is(meatTag))));
 
-                    if (!stack.isIn(meatTag) && !hasMeatInRecipe && !world.isClient()) {
+                    if (!stack.is(meatTag) && !hasMeatInRecipe && !world.isClientSide()) {
                         int amount = Math.min((food.nutrition() + Math.round(food.saturation())) * 2, Integer.MAX_VALUE);
-                        ExperienceOrbEntity orb = new ExperienceOrbEntity(world, user.getX(), user.getY(), user.getZ(), amount);
-                        world.spawnEntity(orb);
+                        ExperienceOrb orb = new ExperienceOrb(world, user.getX(), user.getY(), user.getZ(), amount);
+                        world.addFreshEntity(orb);
                     }
                 }
             }

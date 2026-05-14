@@ -1,8 +1,7 @@
 package com.ibarnstormer.ibarnorigins.registry.utils;
 
-import net.minecraft.util.Identifier;
-
 import java.util.function.Supplier;
+import net.minecraft.resources.Identifier;
 
 public abstract class IORegisterWrapper<R, O> {
 

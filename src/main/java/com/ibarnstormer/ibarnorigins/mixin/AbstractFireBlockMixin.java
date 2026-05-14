@@ -2,36 +2,34 @@ package com.ibarnstormer.ibarnorigins.mixin;
 
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
-import net.minecraft.block.AbstractFireBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCollisionHandler;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(AbstractFireBlock.class)
+@Mixin(BaseFireBlock.class)
 public class AbstractFireBlockMixin extends Block {
 
-    public AbstractFireBlockMixin(Settings settings) {
+    public AbstractFireBlockMixin(Properties settings) {
         super(settings);
     }
 
-    @Inject(method = "onEntityCollision", at = @At(value = "HEAD"), cancellable = true)
-    public void abstractFireBlock$onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bl, CallbackInfo ci) {
-        if(entity instanceof IbarnOriginsEntity ioe && ioe.isSoulMage() && state.isOf(Blocks.SOUL_FIRE)) {
-            if(entity instanceof LivingEntity livingEntity) livingEntity.addStatusEffect(new StatusEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.getRef(), 60, 1, true, false, true));
-            entity.setFireTicks(0);
-            entity.setOnFire(false);
+    @Inject(method = "entityInside", at = @At(value = "HEAD"), cancellable = true)
+    public void abstractFireBlock$entityInside(BlockState state, Level world, BlockPos pos, Entity entity, InsideBlockEffectApplier handler, boolean bl, CallbackInfo ci) {
+        if(entity instanceof IbarnOriginsEntity ioe && ioe.isSoulMage() && state.is(Blocks.SOUL_FIRE)) {
+            if(entity instanceof LivingEntity livingEntity) livingEntity.addEffect(new MobEffectInstance(IOEffects.SOUL_FIRE_STRENGTH.getRef(), 60, 1, true, false, true));
+            entity.setRemainingFireTicks(0);
+            entity.setSharedFlagOnFire(false);
 
             ci.cancel();
         }

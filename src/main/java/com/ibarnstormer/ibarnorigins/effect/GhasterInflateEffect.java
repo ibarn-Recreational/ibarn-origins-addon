@@ -2,27 +2,25 @@ package com.ibarnstormer.ibarnorigins.effect;
 
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
 
-public class GhasterInflateEffect extends StatusEffect implements IExtendedStatusEffect {
+public class GhasterInflateEffect extends MobEffect implements IExtendedStatusEffect {
 
     public GhasterInflateEffect() {
-        super(StatusEffectCategory.BENEFICIAL, 0xffffff);
+        super(MobEffectCategory.BENEFICIAL, 0xffffff);
     }
 
     @Override
-    public void onApplied(LivingEntity entity, int amplifier) {
-        if(entity.getEntityWorld() instanceof ServerWorld serverWorld) {
-            serverWorld.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.ENTITY_PUFFER_FISH_BLOW_UP, SoundCategory.PLAYERS, 1.25f, 0.5F);
-            entity.addVelocity(0, 0.5F, 0);
-            entity.velocityDirty = true;
+    public void onEffectStarted(LivingEntity entity, int amplifier) {
+        if(entity.level() instanceof ServerLevel serverWorld) {
+            serverWorld.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.PUFFER_FISH_BLOW_UP, SoundSource.PLAYERS, 1.25f, 0.5F);
+            entity.push(0, 0.5F, 0);
+            entity.needsSync = true;
         }
 
         if(entity instanceof IbarnOriginsEntity ioe) {
@@ -31,8 +29,8 @@ public class GhasterInflateEffect extends StatusEffect implements IExtendedStatu
     }
 
     @Override
-    public void onStatusEffectRemoved(ServerWorld world, LivingEntity entity, int amplifier) {
-        world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.BLOCK_LAVA_EXTINGUISH, SoundCategory.PLAYERS, 1.25f, 0.5F);
+    public void onStatusEffectRemoved(ServerLevel world, LivingEntity entity, int amplifier) {
+        world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.LAVA_EXTINGUISH, SoundSource.PLAYERS, 1.25f, 0.5F);
 
         if(entity instanceof IbarnOriginsEntity ioe) {
             ioe.setInflated(false);

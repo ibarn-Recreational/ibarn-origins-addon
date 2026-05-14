@@ -4,23 +4,23 @@ import com.ibarnstormer.ibarnorigins.IbarnOriginsMain;
 import com.ibarnstormer.ibarnorigins.effect.*;
 import com.ibarnstormer.ibarnorigins.registry.utils.IORegisterWrapper;
 import com.ibarnstormer.ibarnorigins.registry.utils.RegistryObjectWrapper;
-import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.world.effect.MobEffect;
 
 public class IOEffects {
 
-    public static RegistryObjectWrapper<StatusEffect> SOUL_FIRE;
-    public static RegistryObjectWrapper<StatusEffect> CASTING_SOUL_FIREBALL;
-    public static RegistryObjectWrapper<StatusEffect> SOUL_FIRE_STRENGTH;
-    public static RegistryObjectWrapper<StatusEffect> FIRE_WEAKNESS;
-    public static RegistryObjectWrapper<StatusEffect> INFLATION;
+    public static RegistryObjectWrapper<MobEffect> SOUL_FIRE;
+    public static RegistryObjectWrapper<MobEffect> CASTING_SOUL_FIREBALL;
+    public static RegistryObjectWrapper<MobEffect> SOUL_FIRE_STRENGTH;
+    public static RegistryObjectWrapper<MobEffect> FIRE_WEAKNESS;
+    public static RegistryObjectWrapper<MobEffect> INFLATION;
 
-    public static RegistryObjectWrapper<StatusEffect> GRANT_SOUL_MAGE;
-    public static RegistryObjectWrapper<StatusEffect> GRANT_SAND_PERSON;
-    public static RegistryObjectWrapper<StatusEffect> REVOKE_SOUL_MAGE;
-    public static RegistryObjectWrapper<StatusEffect> REVOKE_SAND_PERSON;
+    public static RegistryObjectWrapper<MobEffect> GRANT_SOUL_MAGE;
+    public static RegistryObjectWrapper<MobEffect> GRANT_SAND_PERSON;
+    public static RegistryObjectWrapper<MobEffect> REVOKE_SOUL_MAGE;
+    public static RegistryObjectWrapper<MobEffect> REVOKE_SAND_PERSON;
 
 
-    public static void init(IORegisterWrapper<?, StatusEffect> register) {
+    public static void init(IORegisterWrapper<?, MobEffect> register) {
 
         SOUL_FIRE = register.register(IbarnOriginsMain.IOIdentifier("soul_fire_effect"), SoulFireEffect::new);
         CASTING_SOUL_FIREBALL = register.register(IbarnOriginsMain.IOIdentifier("casting_soul_fireball_effect"), CastingSoulFireballEffect::new);

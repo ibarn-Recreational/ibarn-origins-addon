@@ -2,11 +2,10 @@ package com.ibarnstormer.ibarnorigins.registry;
 
 import com.ibarnstormer.ibarnorigins.registry.utils.IORegisterWrapper;
 import com.ibarnstormer.ibarnorigins.registry.utils.RegistryObjectWrapper;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
-
 import java.util.function.Supplier;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.Identifier;
 
 public class IOFabricRegisterWrapper<T> extends IORegisterWrapper<Registry<T>, T> {
 
@@ -16,7 +15,7 @@ public class IOFabricRegisterWrapper<T> extends IORegisterWrapper<Registry<T>, T
 
     @Override
     public RegistryObjectWrapper<T> register(Identifier id, Supplier<T> supplier) {
-        RegistryEntry.Reference<T> value = Registry.registerReference(this.register, id, supplier.get());
+        Holder.Reference<T> value = Registry.registerForHolder(this.register, id, supplier.get());
         return new FabricRegistryObject<>(id, value);
     }
 }

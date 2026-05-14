@@ -1,31 +1,33 @@
 package com.ibarnstormer.ibarnorigins.client.render;
 
 import com.ibarnstormer.ibarnorigins.entity.SoulFireBallEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.*;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.*;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class SoulFireBallEntityRenderer extends EntityRenderer<SoulFireBallEntity, EntityRenderState> {
 
-    private static final Identifier TEXTURE = Identifier.of("ibarnorigins:textures/entity/soul_fire_ball.png");
-    private static final RenderLayer LAYER;
+    private static final Identifier TEXTURE = Identifier.parse("ibarnorigins:textures/entity/soul_fire_ball.png");
+    private static final RenderType LAYER;
 
-    public SoulFireBallEntityRenderer(EntityRendererFactory.Context dispatcher) {
+    public SoulFireBallEntityRenderer(EntityRendererProvider.Context dispatcher) {
         super(dispatcher);
     }
 
-    protected int getBlockLight(SoulFireBallEntity soulFireballEntity, BlockPos blockPos) {
+    @Override
+    protected int getBlockLightLevel(SoulFireBallEntity soulFireballEntity, BlockPos blockPos) {
         return 15;
     }
 
@@ -34,25 +36,25 @@ public class SoulFireBallEntityRenderer extends EntityRenderer<SoulFireBallEntit
         return new EntityRenderState();
     }
 
-    public void render(EntityRenderState renderState, MatrixStack matrices, OrderedRenderCommandQueue queue, CameraRenderState cameraState) {
-        matrices.push();
+    public void submit(EntityRenderState renderState, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+        matrices.pushPose();
         matrices.scale(0.75F, 0.75F, 0.75F);
-        matrices.multiply(cameraState.orientation);
-        queue.submitCustom(matrices, LAYER, (matricesEntry, vertexConsumer) -> {
-            produceVertex(vertexConsumer, matricesEntry, renderState.light, 0.0F, 0, 0, 1);
-            produceVertex(vertexConsumer, matricesEntry, renderState.light, 1.0F, 0, 1, 1);
-            produceVertex(vertexConsumer, matricesEntry, renderState.light, 1.0F, 1, 1, 0);
-            produceVertex(vertexConsumer, matricesEntry, renderState.light, 0.0F, 1, 0, 0);
+        matrices.mulPose(cameraState.orientation);
+        queue.submitCustomGeometry(matrices, LAYER, (matricesEntry, vertexConsumer) -> {
+            produceVertex(vertexConsumer, matricesEntry, renderState.lightCoords, 0.0F, 0, 0, 1);
+            produceVertex(vertexConsumer, matricesEntry, renderState.lightCoords, 1.0F, 0, 1, 1);
+            produceVertex(vertexConsumer, matricesEntry, renderState.lightCoords, 1.0F, 1, 1, 0);
+            produceVertex(vertexConsumer, matricesEntry, renderState.lightCoords, 0.0F, 1, 0, 0);
         });
-        matrices.pop();
-        super.render(renderState, matrices, queue, cameraState);
+        matrices.popPose();
+        super.submit(renderState, matrices, queue, cameraState);
     }
 
-    private static void produceVertex(VertexConsumer vertexConsumer, MatrixStack.Entry matrix, int light, float x, int z, int textureU, int textureV) {
-        vertexConsumer.vertex(matrix, x - 0.5F, (float)z - 0.25F, 0.0F).color(-1).texture((float)textureU, (float)textureV).overlay(OverlayTexture.DEFAULT_UV).light(light).normal(matrix, 0.0F, 1.0F, 0.0F);
+    private static void produceVertex(VertexConsumer vertexConsumer, PoseStack.Pose matrix, int light, float x, int z, int textureU, int textureV) {
+        vertexConsumer.addVertex(matrix, x - 0.5F, (float)z - 0.25F, 0.0F).setColor(-1).setUv((float)textureU, (float)textureV).setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(matrix, 0.0F, 1.0F, 0.0F);
     }
 
     static {
-        LAYER = RenderLayers.entityCutoutNoCull(TEXTURE);
+        LAYER = RenderTypes.entityCutout(TEXTURE);
     }
 }

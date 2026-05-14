@@ -1,15 +1,14 @@
 package com.ibarnstormer.ibarnorigins.registry.utils;
 
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
-
 import java.util.function.Supplier;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
 
 public interface RegistryObjectWrapper<T> extends Supplier<T> {
 
     Identifier getIdentifier();
     T get();
-    RegistryEntry.Reference<T> getRef();
+    Holder.Reference<T> getRef();
 
 
 }

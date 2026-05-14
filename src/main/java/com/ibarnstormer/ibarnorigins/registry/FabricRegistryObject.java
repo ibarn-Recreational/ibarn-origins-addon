@@ -1,15 +1,15 @@
 package com.ibarnstormer.ibarnorigins.registry;
 
 import com.ibarnstormer.ibarnorigins.registry.utils.RegistryObjectWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
 
 public class FabricRegistryObject<T> implements RegistryObjectWrapper<T> {
 
     private final Identifier id;
-    private final RegistryEntry.Reference<T> value;
+    private final Holder.Reference<T> value;
 
-    public FabricRegistryObject(Identifier id, RegistryEntry.Reference<T> value) {
+    public FabricRegistryObject(Identifier id, Holder.Reference<T> value) {
         this.id = id;
         this.value = value;
     }
@@ -25,7 +25,7 @@ public class FabricRegistryObject<T> implements RegistryObjectWrapper<T> {
     }
 
     @Override
-    public RegistryEntry.Reference<T> getRef() {
+    public Holder.Reference<T> getRef() {
         return value;
     }
 

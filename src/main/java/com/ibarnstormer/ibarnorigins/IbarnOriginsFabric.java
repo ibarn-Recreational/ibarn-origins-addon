@@ -8,19 +8,19 @@ import com.ibarnstormer.ibarnorigins.registry.IOParticles;
 import com.ibarnstormer.ibarnorigins.registry.IOSounds;
 import com.ibarnstormer.ibarnorigins.registry.utils.IORegisterWrapper;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
 
 public class IbarnOriginsFabric implements ModInitializer {
 
-    public static final IORegisterWrapper<Registry<EntityType<?>>, EntityType<?>> IOEntityRegister = new IOFabricRegisterWrapper<>(Registries.ENTITY_TYPE);
-    public static final IORegisterWrapper<Registry<ParticleType<?>>, ParticleType<?>> IOParticleRegister = new IOFabricRegisterWrapper<>(Registries.PARTICLE_TYPE);
-    public static final IORegisterWrapper<Registry<StatusEffect>, StatusEffect> IOStatusEffectRegister = new IOFabricRegisterWrapper<>(Registries.STATUS_EFFECT);
-    public static final IORegisterWrapper<Registry<SoundEvent>, SoundEvent> IOSoundEventRegister = new IOFabricRegisterWrapper<>(Registries.SOUND_EVENT);
+    public static final IORegisterWrapper<Registry<EntityType<?>>, EntityType<?>> IOEntityRegister = new IOFabricRegisterWrapper<>(BuiltInRegistries.ENTITY_TYPE);
+    public static final IORegisterWrapper<Registry<ParticleType<?>>, ParticleType<?>> IOParticleRegister = new IOFabricRegisterWrapper<>(BuiltInRegistries.PARTICLE_TYPE);
+    public static final IORegisterWrapper<Registry<MobEffect>, MobEffect> IOStatusEffectRegister = new IOFabricRegisterWrapper<>(BuiltInRegistries.MOB_EFFECT);
+    public static final IORegisterWrapper<Registry<SoundEvent>, SoundEvent> IOSoundEventRegister = new IOFabricRegisterWrapper<>(BuiltInRegistries.SOUND_EVENT);
 
 
     @Override

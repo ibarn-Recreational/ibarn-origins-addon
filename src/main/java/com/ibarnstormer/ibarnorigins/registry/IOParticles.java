@@ -3,7 +3,7 @@ package com.ibarnstormer.ibarnorigins.registry;
 import com.ibarnstormer.ibarnorigins.IbarnOriginsMain;
 import com.ibarnstormer.ibarnorigins.registry.utils.IORegisterWrapper;
 import com.ibarnstormer.ibarnorigins.registry.utils.RegistryObjectWrapper;
-import net.minecraft.particle.SimpleParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
 
 public class IOParticles {
 

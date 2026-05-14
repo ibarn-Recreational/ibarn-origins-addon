@@ -2,56 +2,50 @@ package com.ibarnstormer.ibarnorigins.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.RandomSource;
 
-public class SoulMageFlameParticle extends AbstractSlowingParticle {
+public class SoulMageFlameParticle extends RisingParticle {
 
-    protected SoulMageFlameParticle(ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, Sprite sprite) {
+    protected SoulMageFlameParticle(ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, TextureAtlasSprite sprite) {
         super(clientWorld, d, e, f, g, h, i, sprite);
     }
 
 
     public void move(double dx, double dy, double dz) {
-        this.setBoundingBox(this.getBoundingBox().offset(dx, dy, dz));
-        this.repositionFromBoundingBox();
+        this.setBoundingBox(this.getBoundingBox().move(dx, dy, dz));
+        this.setLocationFromBoundingbox();
     }
 
-    public float getSize(float tickDelta) {
-        float f = ((float)this.age + tickDelta) / (float)this.maxAge;
-        return this.scale * (1.0F - f * f * 0.5F);
+    public float getQuadSize(float tickDelta) {
+        float f = ((float)this.age + tickDelta) / (float)this.lifetime;
+        return this.quadSize * (1.0F - f * f * 0.5F);
     }
 
     @Override
-    protected RenderType getRenderType() {
-        return RenderType.PARTICLE_ATLAS_OPAQUE;
+    protected Layer getLayer() {
+        return Layer.OPAQUE;
     }
 
-    public int getBrightness(float tint) {
-        int i = super.getBrightness(tint);
-        int j = i & 255;
-        int k = i >> 16 & 255;
-        j += (int)(15.0F * 16.0F);
-        if (j > 240) {
-            j = 240;
-        }
-
-        return j | k << 16;
+    @Override
+    public int getLightCoords(final float a) {
+        return LightCoordsUtil.addSmoothBlockEmission(super.getLightCoords(a), 15);
     }
 
     @Environment(EnvType.CLIENT)
-    public static class Factory implements ParticleFactory<SimpleParticleType> {
-        private final SpriteProvider spriteProvider;
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
+        private final SpriteSet spriteProvider;
 
-        public Factory(SpriteProvider spriteProvider) {
+        public Factory(SpriteSet spriteProvider) {
             this.spriteProvider = spriteProvider;
         }
 
-        public Particle createParticle(SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, Random random) {
-            return new SoulMageFlameParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider.getSprite(random));
+        public Particle createParticle(SimpleParticleType simpleParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, RandomSource random) {
+            return new SoulMageFlameParticle(clientWorld, d, e, f, g, h, i, this.spriteProvider.get(random));
         }
     }
 

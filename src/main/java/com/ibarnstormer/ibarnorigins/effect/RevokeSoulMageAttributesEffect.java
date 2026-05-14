@@ -1,19 +1,18 @@
 package com.ibarnstormer.ibarnorigins.effect;
 
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
 
-public class RevokeSoulMageAttributesEffect extends StatusEffect {
+public class RevokeSoulMageAttributesEffect extends MobEffect {
 
     public RevokeSoulMageAttributesEffect() {
-        super(StatusEffectCategory.NEUTRAL, 0xffffff);
+        super(MobEffectCategory.NEUTRAL, 0xffffff);
     }
 
     @Override
-    public void onApplied(LivingEntity entity, int amplifier) {
+    public void onEffectStarted(LivingEntity entity, int amplifier) {
         if(entity instanceof IbarnOriginsEntity ioe) ioe.setSoulMage(false);
     }
 }

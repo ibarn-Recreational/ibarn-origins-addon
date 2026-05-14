@@ -7,12 +7,10 @@ import com.ibarnstormer.ibarnorigins.client.render.entity.state.SoulMageSpellCas
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.entity.SoulFireBallEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,15 +20,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(EntityRenderer.class)
 public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> {
 
-    @Inject(method = "getBlockLight", at = @At("RETURN"), cancellable = true)
-    public <T extends Entity> void entityRenderer$getBlockLight(T entity, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
+    @Inject(method = "getBlockLightLevel", at = @At("RETURN"), cancellable = true)
+    public <T extends Entity> void entityRenderer$getBlockLightLevel(T entity, BlockPos pos, CallbackInfoReturnable<Integer> cir) {
         if(entity instanceof IbarnOriginsEntity ioe) {
             cir.setReturnValue(ioe.onSoulMageFire() || ioe.onSoulFire() ? 15 : cir.getReturnValueI());
         }
     }
 
-    @Inject(method = "updateRenderState", at = @At("TAIL"))
-    private void entityRenderer$updateRenderState(T entity, S state, float tickProgress, CallbackInfo ci) {
+    @Inject(method = "extractRenderState", at = @At("TAIL"))
+    private void entityRenderer$extractRenderState(T entity, S state, float tickProgress, CallbackInfo ci) {
         SoulFireRenderState soulFireRenderState = new SoulFireRenderState();
         SoulMageFireRenderState soulMageFireRenderState = new SoulMageFireRenderState();
         SoulMageSpellCastState soulMageSpellCastState = new SoulMageSpellCastState();
@@ -46,7 +44,7 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
         state.setData(SoulFireRenderState.KEY, soulFireRenderState);
         state.setData(InflationRenderState.KEY, inflationRenderState);
 
-        state.onFire = state.onFire || soulFireRenderState.renderSoulFire || soulMageFireRenderState.renderSoulMageFire;
+        state.displayFireAnimation = state.displayFireAnimation || soulFireRenderState.renderSoulFire || soulMageFireRenderState.renderSoulMageFire;
     }
 
 }

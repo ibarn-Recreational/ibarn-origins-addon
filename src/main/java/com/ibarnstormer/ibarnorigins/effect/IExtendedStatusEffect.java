@@ -1,10 +1,10 @@
 package com.ibarnstormer.ibarnorigins.effect;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
 
 public interface IExtendedStatusEffect {
 
-    void onStatusEffectRemoved(ServerWorld world, LivingEntity entity, int amplifier);
+    void onStatusEffectRemoved(ServerLevel world, LivingEntity entity, int amplifier);
 
 }

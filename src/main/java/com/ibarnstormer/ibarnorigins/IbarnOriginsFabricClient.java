@@ -9,7 +9,7 @@ import com.ibarnstormer.ibarnorigins.registry.IOParticles;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 
 @Environment(EnvType.CLIENT)
@@ -22,7 +22,7 @@ public class IbarnOriginsFabricClient implements ClientModInitializer {
         EntityRendererRegistry.register(IOEntities.HOMING_WITHER_SKULL_ENTITY.get(), HomingWitherSkullEntityRenderer::new);
 
         // Particle Renderers
-        ParticleFactoryRegistry.getInstance().register(IOParticles.SOUL_MAGE_FLAME.get(), SoulMageFlameParticle.Factory::new);
-        ParticleFactoryRegistry.getInstance().register(IOParticles.EMPTY_PARTICLE.get(), EmptyParticle.Factory::new);
+        ParticleProviderRegistry.getInstance().register(IOParticles.SOUL_MAGE_FLAME.get(), SoulMageFlameParticle.Factory::new);
+        ParticleProviderRegistry.getInstance().register(IOParticles.EMPTY_PARTICLE.get(), EmptyParticle.Factory::new);
     }
 }

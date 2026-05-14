@@ -2,24 +2,24 @@ package com.ibarnstormer.ibarnorigins.particle;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particle.SimpleParticleType;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.RandomSource;
 
 public class EmptyParticle extends NoRenderParticle {
 
-    public EmptyParticle(ClientWorld world, double $$1, double $$2, double $$3) {
+    public EmptyParticle(ClientLevel world, double $$1, double $$2, double $$3) {
         super(world, $$1, $$2, $$3, 0.0D, 0.0D, 0.0D);
     }
 
     @Environment(EnvType.CLIENT)
-    public static class Factory implements ParticleFactory<SimpleParticleType> {
+    public static class Factory implements ParticleProvider<SimpleParticleType> {
 
-        public Factory(SpriteProvider spriteProvider) {}
+        public Factory(SpriteSet spriteProvider) {}
 
         public Particle createParticle(
-                SimpleParticleType simpleParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i, Random random
+                SimpleParticleType simpleParticleType, ClientLevel clientWorld, double d, double e, double f, double g, double h, double i, RandomSource random
         ) {
             return new EmptyParticle(clientWorld, d, e, f);
         }

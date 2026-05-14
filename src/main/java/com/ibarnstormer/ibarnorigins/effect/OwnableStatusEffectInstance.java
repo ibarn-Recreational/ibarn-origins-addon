@@ -1,48 +1,47 @@
 package com.ibarnstormer.ibarnorigins.effect;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 
-public class OwnableStatusEffectInstance extends StatusEffectInstance {
+public class OwnableStatusEffectInstance extends MobEffectInstance {
 
     @Nullable
     private final UUID ownerUUID;
 
-    public OwnableStatusEffectInstance(RegistryEntry<StatusEffect> type, int duration, int amplifier, boolean ambient, boolean showParticles, boolean showIcon, UUID ownerUUID) {
+    public OwnableStatusEffectInstance(Holder<MobEffect> type, int duration, int amplifier, boolean ambient, boolean showParticles, boolean showIcon, UUID ownerUUID) {
         this(type, duration, amplifier, ambient, showParticles, showIcon, ownerUUID, null);
     }
 
-    public OwnableStatusEffectInstance(RegistryEntry<StatusEffect> type, int duration, int amplifier, boolean ambient, boolean showParticles, boolean showIcon, UUID ownerUUID, @Nullable StatusEffectInstance hiddenEffect) {
+    public OwnableStatusEffectInstance(Holder<MobEffect> type, int duration, int amplifier, boolean ambient, boolean showParticles, boolean showIcon, UUID ownerUUID, @Nullable MobEffectInstance hiddenEffect) {
         super(type, duration, amplifier, ambient, showParticles, showIcon, hiddenEffect);
 
         this.ownerUUID = ownerUUID;
     }
 
-    public OwnableStatusEffectInstance(RegistryEntry<StatusEffect> type, int duration, int amplifier, boolean ambient, boolean visible, @Nullable UUID ownerUUID) {
+    public OwnableStatusEffectInstance(Holder<MobEffect> type, int duration, int amplifier, boolean ambient, boolean visible, @Nullable UUID ownerUUID) {
         super(type, duration, amplifier, ambient, visible, visible);
 
         this.ownerUUID = ownerUUID;
     }
 
-    public OwnableStatusEffectInstance(StatusEffectInstance instance, @Nullable UUID ownerUUID) {
+    public OwnableStatusEffectInstance(MobEffectInstance instance, @Nullable UUID ownerUUID) {
         super(instance);
 
         this.ownerUUID = ownerUUID;
     }
 
-    public @Nullable LivingEntity getOwner(World world) {
+    public @Nullable LivingEntity getOwner(Level world) {
         LivingEntity owner = null;
-        if (this.ownerUUID != null && world instanceof ServerWorld) {
+        if (this.ownerUUID != null && world instanceof ServerLevel) {
             Entity entity = world.getEntity(this.ownerUUID);
             if (entity instanceof LivingEntity) {
                 owner = (LivingEntity)entity;
@@ -53,9 +52,9 @@ public class OwnableStatusEffectInstance extends StatusEffectInstance {
     }
 
     @Override
-    public boolean update(ServerWorld world, LivingEntity entity, Runnable hiddenEffectCallback) {
-        if(this.getEffectType().value().isBeneficial() || entity.getUuid() != this.ownerUUID) {
-            return super.update(world, entity, hiddenEffectCallback);
+    public boolean tickServer(ServerLevel world, LivingEntity entity, Runnable hiddenEffectCallback) {
+        if(this.getEffect().value().isBeneficial() || entity.getUUID() != this.ownerUUID) {
+            return super.tickServer(world, entity, hiddenEffectCallback);
         }
         else return false;
     }

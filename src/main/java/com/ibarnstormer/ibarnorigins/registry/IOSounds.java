@@ -3,8 +3,8 @@ package com.ibarnstormer.ibarnorigins.registry;
 import com.ibarnstormer.ibarnorigins.IbarnOriginsMain;
 import com.ibarnstormer.ibarnorigins.registry.utils.IORegisterWrapper;
 import com.ibarnstormer.ibarnorigins.registry.utils.RegistryObjectWrapper;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 
 public class IOSounds {
 
@@ -18,9 +18,9 @@ public class IOSounds {
 
 
     public static void init(IORegisterWrapper<?, SoundEvent> register) {
-        SOUL_BLAST = register.register(SOUL_BLAST_ID, () -> SoundEvent.of(SOUL_BLAST_ID));
-        KI_BLAST_CHARGE = register.register(KI_BLAST_CHARGE_ID, () -> SoundEvent.of(KI_BLAST_CHARGE_ID));
-        KI_BLAST_FIRE = register.register(KI_BLAST_FIRE_ID, () -> SoundEvent.of(KI_BLAST_FIRE_ID));
+        SOUL_BLAST = register.register(SOUL_BLAST_ID, () -> SoundEvent.createVariableRangeEvent(SOUL_BLAST_ID));
+        KI_BLAST_CHARGE = register.register(KI_BLAST_CHARGE_ID, () -> SoundEvent.createVariableRangeEvent(KI_BLAST_CHARGE_ID));
+        KI_BLAST_FIRE = register.register(KI_BLAST_FIRE_ID, () -> SoundEvent.createVariableRangeEvent(KI_BLAST_FIRE_ID));
     }
 
 }

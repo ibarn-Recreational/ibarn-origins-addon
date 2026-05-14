@@ -1,53 +1,48 @@
 package com.ibarnstormer.ibarnorigins.mixin;
 
 import com.ibarnstormer.ibarnorigins.client.ModModelLoader;
-import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.hud.InGameOverlayRenderer;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.texture.SpriteHolder;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.registry.entry.RegistryEntry;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.ScreenEffectRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.world.effect.MobEffectInstance;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(InGameOverlayRenderer.class)
+@Mixin(ScreenEffectRenderer.class)
 public class InGameOverlayRendererMixin {
 
     @Shadow @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
     @Shadow @Final
-    private VertexConsumerProvider vertexConsumers;
+    private MultiBufferSource bufferSource;
     @Shadow @Final
-    private SpriteHolder spriteHolder;
+    private SpriteGetter sprites;
 
     @Shadow
-    private static void renderFireOverlay(MatrixStack matrices, VertexConsumerProvider vertexConsumers, Sprite sprite) {}
+    private static void renderFire(PoseStack matrices, MultiBufferSource vertexConsumers, TextureAtlasSprite sprite) {}
 
-    @Inject(method = "renderOverlays", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isOnFire()Z", shift = At.Shift.BEFORE))
-    private void inGameOverlayRenderer$renderOverlays(boolean sleeping, float tickProgress, OrderedRenderCommandQueue queue, CallbackInfo ci, @Local MatrixStack matrices) {
-        ClientPlayerEntity player = client.player;
+    @Inject(method = "renderScreenEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isOnFire()Z", shift = At.Shift.BEFORE))
+    private void inGameOverlayRenderer$renderOverlays(boolean isFirstPerson, boolean isSleeping, float partialTicks, SubmitNodeCollector submitNodeCollector, boolean hideGui, CallbackInfo ci, @Local PoseStack matrices) {
+        LocalPlayer player = minecraft.player;
 
         if(player != null) {
-            StatusEffectInstance soulFireStrength = player.getStatusEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef());
+            MobEffectInstance soulFireStrength = player.getEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef());
             if(soulFireStrength != null && soulFireStrength.getAmplifier() >= 1) {
-                renderFireOverlay(matrices, this.vertexConsumers, this.spriteHolder.getSprite(ModModelLoader.SOUL_FIRE_1));
+                renderFire(matrices, this.bufferSource, this.sprites.get(ModModelLoader.SOUL_FIRE_1));
             }
-            else if(player.hasStatusEffect(IOEffects.SOUL_FIRE.getRef())) {
-                renderFireOverlay(matrices, this.vertexConsumers, this.spriteHolder.getSprite(ModModelLoader.SOUL_MAGE_FIRE_1));
+            else if(player.hasEffect(IOEffects.SOUL_FIRE.getRef())) {
+                renderFire(matrices, this.bufferSource, this.sprites.get(ModModelLoader.SOUL_MAGE_FIRE_1));
             }
         }
     }

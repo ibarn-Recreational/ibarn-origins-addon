@@ -5,54 +5,51 @@ import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.entity.SoulFireBallEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import com.ibarnstormer.ibarnorigins.registry.IOSounds;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
-public class CastingSoulFireballEffect extends StatusEffect implements IExtendedStatusEffect {
+public class CastingSoulFireballEffect extends MobEffect implements IExtendedStatusEffect {
 
     private final Identifier ID = IbarnOriginsMain.IOIdentifier("casting_slowdown");
-    private final EntityAttributeModifier MOVEMENT_MODIFIER = new EntityAttributeModifier(ID, -0.5D, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+    private final AttributeModifier MOVEMENT_MODIFIER = new AttributeModifier(ID, -0.5D, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
     public CastingSoulFireballEffect() {
-        super(StatusEffectCategory.NEUTRAL, 0xffffff);
+        super(MobEffectCategory.NEUTRAL, 0xffffff);
     }
 
     @Override
-    public void onApplied(LivingEntity entity, int amplifier) {
+    public void onEffectStarted(LivingEntity entity, int amplifier) {
 
-        if(entity.getEntityWorld() instanceof ServerWorld serverWorld) {
-            serverWorld.playSound(null, entity.getX(), entity.getY(), entity.getZ(), IOSounds.KI_BLAST_CHARGE.get(), SoundCategory.PLAYERS, 1.25f, 1);
+        if(entity.level() instanceof ServerLevel serverWorld) {
+            serverWorld.playSound(null, entity.getX(), entity.getY(), entity.getZ(), IOSounds.KI_BLAST_CHARGE.get(), SoundSource.PLAYERS, 1.25f, 1);
         }
 
-        if(entity instanceof IbarnOriginsEntity spellCaster && entity.hasStatusEffect(IOEffects.CASTING_SOUL_FIREBALL.getRef())) spellCaster.setSpellCastTicks(entity.getStatusEffect(IOEffects.CASTING_SOUL_FIREBALL.getRef()).getDuration());
+        if(entity instanceof IbarnOriginsEntity spellCaster && entity.hasEffect(IOEffects.CASTING_SOUL_FIREBALL.getRef())) spellCaster.setSpellCastTicks(entity.getEffect(IOEffects.CASTING_SOUL_FIREBALL.getRef()).getDuration());
 
-        EntityAttributeInstance movement = entity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
-        if(movement != null && !movement.hasModifier(ID))  movement.addTemporaryModifier(MOVEMENT_MODIFIER);
+        AttributeInstance movement = entity.getAttribute(Attributes.MOVEMENT_SPEED);
+        if(movement != null && !movement.hasModifier(ID))  movement.addTransientModifier(MOVEMENT_MODIFIER);
 
-        super.onApplied(entity, amplifier);
+        super.onEffectStarted(entity, amplifier);
     }
 
 
     @Override
-    public void onStatusEffectRemoved(ServerWorld world, LivingEntity entity, int amplifier) {
-        world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), IOSounds.KI_BLAST_FIRE.get(), SoundCategory.PLAYERS, 1.25f, 1);
+    public void onStatusEffectRemoved(ServerLevel world, LivingEntity entity, int amplifier) {
+        world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), IOSounds.KI_BLAST_FIRE.get(), SoundSource.PLAYERS, 1.25f, 1);
 
-        SoulFireBallEntity fireball = new SoulFireBallEntity(entity, entity.getRotationVector(), entity.getEntityWorld());
-        fireball.setPos(entity.getX(), entity.getEyeY(), entity.getZ());
+        SoulFireBallEntity fireball = new SoulFireBallEntity(entity, entity.getLookAngle(), entity.level());
+        fireball.setPosRaw(entity.getX(), entity.getEyeY(), entity.getZ());
 
-        world.spawnEntity(fireball);
+        world.addFreshEntity(fireball);
 
-        EntityAttributeInstance movement = entity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+        AttributeInstance movement = entity.getAttribute(Attributes.MOVEMENT_SPEED);
         if(movement != null) if(movement.hasModifier(ID)) movement.removeModifier(MOVEMENT_MODIFIER);
     }
 }
