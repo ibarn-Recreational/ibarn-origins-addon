@@ -24,6 +24,7 @@
     "FireCommandMixin",
     "FireCommandRendererMixin",
     "InGameOverlayRendererMixin",
+    "LayerDefinitionsMixin",
     "LivingEntityRendererMixin"
   ]
 }

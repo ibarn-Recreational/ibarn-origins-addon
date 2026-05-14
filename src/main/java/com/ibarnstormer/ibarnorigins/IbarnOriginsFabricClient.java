@@ -21,6 +21,8 @@ public class IbarnOriginsFabricClient implements ClientModInitializer {
         EntityRendererRegistry.register(IOEntities.SOUL_FIRE_BALL_ENTITY.get(), SoulFireBallEntityRenderer::new);
         EntityRendererRegistry.register(IOEntities.HOMING_WITHER_SKULL_ENTITY.get(), HomingWitherSkullEntityRenderer::new);
 
+
+
         // Particle Renderers
         ParticleProviderRegistry.getInstance().register(IOParticles.SOUL_MAGE_FLAME.get(), SoulMageFlameParticle.Factory::new);
         ParticleProviderRegistry.getInstance().register(IOParticles.EMPTY_PARTICLE.get(), EmptyParticle.Factory::new);

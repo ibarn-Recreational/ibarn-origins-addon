@@ -36,6 +36,7 @@ public class SoulFireBallEntityRenderer extends EntityRenderer<SoulFireBallEntit
         return new EntityRenderState();
     }
 
+    @Override
     public void submit(EntityRenderState renderState, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
         matrices.pushPose();
         matrices.scale(0.75F, 0.75F, 0.75F);
