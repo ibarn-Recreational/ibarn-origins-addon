@@ -29,27 +29,6 @@ public class SoulFireStrengthEffect extends StatusEffect implements IExtendedSta
     }
 
     @Override
-    public boolean canApplyUpdateEffect(int duration, int amplifier) {
-        return true;
-    }
-
-    @Override
-    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
-        StatusEffectInstance instance = entity.getStatusEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef());
-
-        if(instance != null && entity.getEntityWorld() instanceof ServerWorld && instance.getDuration() == 1) {
-
-            EntityAttributeInstance damage = entity.getAttributeInstance(EntityAttributes.ATTACK_DAMAGE);
-            if (damage != null && damage.getModifier(ID) != null)
-                damage.removeModifier(ID);
-
-            entity.removeStatusEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef());
-        }
-
-        return true;
-    }
-
-    @Override
     public void onApplied(LivingEntity entity, int amplifier) {
         EntityAttributeInstance damage = entity.getAttributeInstance(EntityAttributes.ATTACK_DAMAGE);
 
@@ -72,8 +51,6 @@ public class SoulFireStrengthEffect extends StatusEffect implements IExtendedSta
         EntityAttributeInstance damage = entity.getAttributeInstance(EntityAttributes.ATTACK_DAMAGE);
         if (damage != null && damage.getModifier(ID) != null)
             damage.removeModifier(ID);
-
-        entity.removeStatusEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef());
 
         if(amplifier >= 1 && entity instanceof IbarnOriginsEntity ioe) {
             ioe.setOnSoulFire(false);
