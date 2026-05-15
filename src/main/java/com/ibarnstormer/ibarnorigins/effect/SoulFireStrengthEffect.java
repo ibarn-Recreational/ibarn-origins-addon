@@ -25,27 +25,6 @@ public class SoulFireStrengthEffect extends MobEffect implements IExtendedStatus
     }
 
     @Override
-    public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
-        return true;
-    }
-
-    @Override
-    public boolean applyEffectTick(ServerLevel world, LivingEntity entity, int amplifier) {
-        MobEffectInstance instance = entity.getEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef());
-
-        if(instance != null && entity.level() instanceof ServerLevel && instance.getDuration() == 1) {
-
-            AttributeInstance damage = entity.getAttribute(Attributes.ATTACK_DAMAGE);
-            if (damage != null && damage.getModifier(ID) != null)
-                damage.removeModifier(ID);
-
-            entity.removeEffect(IOEffects.SOUL_FIRE_STRENGTH.getRef());
-        }
-
-        return true;
-    }
-
-    @Override
     public void onEffectStarted(LivingEntity entity, int amplifier) {
         AttributeInstance damage = entity.getAttribute(Attributes.ATTACK_DAMAGE);
 
