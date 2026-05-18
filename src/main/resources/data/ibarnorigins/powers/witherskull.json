@@ -7,6 +7,7 @@
     "bar_index":17
   },
   "entity_type":"ibarnorigins:homing_wither_skull",
+  "tag": "{ignoresOwnerRelativeMovement:1b}",
   "count":1,
   "speed": 0.1,
   "key": {

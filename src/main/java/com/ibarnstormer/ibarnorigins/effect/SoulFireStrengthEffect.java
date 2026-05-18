@@ -48,7 +48,7 @@ public class SoulFireStrengthEffect extends MobEffect implements IExtendedStatus
         if (damage != null && damage.getModifier(ID) != null)
             damage.removeModifier(ID);
 
-        if(amplifier >= 1 && entity instanceof IbarnOriginsEntity ioe) {
+        if(entity instanceof IbarnOriginsEntity ioe) {
             ioe.setOnSoulFire(false);
         }
     }

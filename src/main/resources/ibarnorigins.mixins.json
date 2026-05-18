@@ -9,6 +9,7 @@
     "FoodComponentMixin",
     "LivingEntityMixin",
     "PiglinBrainMixin",
+    "ProjectileMixin",
     "ServerPlayerEntityMixin"
   ],
   "injectors": {

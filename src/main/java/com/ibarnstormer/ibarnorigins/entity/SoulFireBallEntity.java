@@ -90,7 +90,7 @@ public class SoulFireBallEntity extends AbstractHurtingProjectile {
                 areaEffectCloudEntity.setRadius(1.5F);
                 areaEffectCloudEntity.setDuration((int) (80 + exp_mult * 0.25F));
 
-                if(charged && soulFireStrength.getAmplifier() % 2 == 1) {
+                if(charged) {
                     areaEffectCloudEntity.reapplicationDelay = 15;
                 }
 
