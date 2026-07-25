@@ -22,9 +22,9 @@
     "BatchingRenderCommandQueueMixin",
     "BipedEntityModelMixin",
     "EntityRendererMixin",
-    "FireCommandMixin",
-    "FireCommandRendererMixin",
-    "InGameOverlayRendererMixin",
+    "FlameFeatureRenderer$SubmitMixin",
+    "FlameFeatureRendererMixin",
+    "ScreenEffectRendererMixin",
     "LayerDefinitionsMixin",
     "LivingEntityRendererMixin"
   ]
