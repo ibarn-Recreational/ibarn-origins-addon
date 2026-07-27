@@ -2,7 +2,6 @@ package com.ibarnstormer.ibarnorigins.mixin;
 
 import com.ibarnstormer.ibarnorigins.client.render.entity.state.InflationRenderState;
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
-import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;

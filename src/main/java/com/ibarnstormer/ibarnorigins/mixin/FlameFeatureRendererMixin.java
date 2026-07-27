@@ -6,6 +6,7 @@ import com.ibarnstormer.ibarnorigins.client.render.entity.state.SoulMageFireRend
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.renderer.feature.FeatureFrameContext;
 import net.minecraft.client.renderer.feature.FlameFeatureRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.sprite.SpriteId;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -39,18 +40,18 @@ public class FlameFeatureRendererMixin {
         shouldRenderSoulMageFire = this.getSoulMageFireRenderCommand(submit).renderSoulMageFire();
     }
 
-    @ModifyArg(method = "buildGroup", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/sprite/AtlasManager;get(Lnet/minecraft/client/resources/model/sprite/SpriteId;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;", ordinal = 0))
-    private SpriteId fireCommandRenderer$renderFlame0(SpriteId sprite) {
-        if(shouldRenderSoulMageFire) return ModModelLoader.SOUL_MAGE_FIRE_0;
-        if(shouldRenderSoulFire) return ModModelLoader.SOUL_FIRE_0;
-        else return sprite;
+    @ModifyArg(method = "buildGroup", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/FlameFeatureRenderer;prepare(Lnet/minecraft/client/renderer/feature/FlameFeatureRenderer$Submit;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"), index = 2)
+    private TextureAtlasSprite fireCommandRenderer$renderFlame0(TextureAtlasSprite fire1, @Local(name = "context") FeatureFrameContext context) {
+        if(shouldRenderSoulMageFire) return context.atlasManager().get(ModModelLoader.SOUL_MAGE_FIRE_0);
+        if(shouldRenderSoulFire) return context.atlasManager().get(ModModelLoader.SOUL_FIRE_0);
+        else return fire1;
     }
 
-    @ModifyArg(method = "buildGroup", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/model/sprite/AtlasManager;get(Lnet/minecraft/client/resources/model/sprite/SpriteId;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;", ordinal = 1))
-    private SpriteId fireCommandRenderer$renderFlame1(SpriteId sprite) {
-        if(shouldRenderSoulMageFire) return ModModelLoader.SOUL_MAGE_FIRE_1;
-        if(shouldRenderSoulFire) return ModModelLoader.SOUL_FIRE_1;
-        else return sprite;
+    @ModifyArg(method = "buildGroup", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/FlameFeatureRenderer;prepare(Lnet/minecraft/client/renderer/feature/FlameFeatureRenderer$Submit;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"), index = 3)
+    private TextureAtlasSprite fireCommandRenderer$renderFlame1(TextureAtlasSprite fire2, @Local(name = "context") FeatureFrameContext context) {
+        if(shouldRenderSoulMageFire) return context.atlasManager().get(ModModelLoader.SOUL_MAGE_FIRE_1);
+        if(shouldRenderSoulFire) return context.atlasManager().get(ModModelLoader.SOUL_FIRE_1);
+        else return fire2;
     }
 
 
