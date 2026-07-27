@@ -1,0 +1,31 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.ibarnstormer.ibarnorigins.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_18",
+  "mixins": [
+    "AreaEffectCloudAccessor",
+    "AreaEffectCloudEntityMixin",
+    "BaseFireBlockMixin",
+    "CampfireBlockMixin",
+    "LivingEntityMixin",
+    "PiglinAiMixin",
+    "PlayerEntityMixin",
+    "ProjectileMixin",
+    "ServerPlayerEntityMixin",
+    "SimpleParticleTypeInvoker"
+  ],
+  "client": [
+    "EntityRendererDispatcherMixin",
+    "EntityRendererMixin",
+    "HumanoidModelMixin",
+    "LivingEntityRendererMixin",
+    "ScreenEffectRendererMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+

@@ -1,0 +1,39 @@
+{
+  "type": "origins:active_self",
+  "entity_action": {
+    "type": "origins:apply_effect",
+    "effects": [
+      {
+        "effect": "ibarnorigins:inflation_effect",
+        "duration": 160,
+        "amplifier": 0,
+        "is_ambient": false,
+        "show_particles": false,
+        "show_icon": true
+      },
+      {
+        "effect": "minecraft:levitation",
+        "duration": 160,
+        "amplifier": 2,
+        "is_ambient": false,
+        "show_particles": false,
+        "show_icon": false
+      }
+    ]
+  },
+  "cooldown": 500,
+  "hud_render": {
+    "should_render": true,
+    "sprite_location": "origins:textures/gui/community/huang/resource_bar_01.png",
+    "bar_index": 3
+  },
+  "key": {
+    "key": "key.jump",
+    "continuous": false
+  },
+  "condition": {
+    "type": "origins:sneaking"
+  },
+  "name": "Inflation",
+  "description": "Jumping while sneaking will cause you to inflate and float up for a short period of time."
+}

@@ -1,0 +1,17 @@
+{
+  "soul_blast": {
+    "sounds": [
+      "ibarnorigins:soul_blast"
+    ]
+  },
+  "ki_blast_charge": {
+	  "sounds": [
+	  "ibarnorigins:ki_blast_charge"
+	  ]
+  },
+  "ki_blast_fire": {
+	  "sounds": [
+	  "ibarnorigins:ki_blast_fire"
+	  ]
+  }
+}

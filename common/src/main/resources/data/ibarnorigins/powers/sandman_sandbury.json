@@ -1,0 +1,22 @@
+{
+    "type": "origins:phasing",
+    "render_type": "blindness",
+    "view_distance": 10,
+    "block_condition": {
+        "type": "origins:in_tag",
+        "tag": "ibarnorigins:sand"
+    },
+    "phase_down_condition": {
+        "type": "origins:and",
+        "conditions": [
+            {
+                "type": "origins:sneaking"
+            },
+            {
+                "type": "origins:on_block"
+            }
+        ]
+    },
+  "name": "Sand Burrowing",
+  "description": "You are able to burrow yourself into the sand."
+}
