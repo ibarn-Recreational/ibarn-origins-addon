@@ -3,43 +3,36 @@
 	"meat_saturation_modifier": {
 		"type": "origins:modify_food",
 		"item_condition": {
-			"type": "origins:and",
+			"type": "origins:all_of",
 			"conditions": [
-			  {
-				"type": "origins:or",
-				"conditions": [
-				  {
+				{
 					"type": "origins:ingredient",
 					"ingredient": {
-					  "tag": "origins:meat"
-					}
-				  },
-				  {
-					"type": "origins:meat"
-				  }
-				]
-			  },
-			  {
-				"type": "origins:food"
-			  },
-			  {
-				"type": "origins:ingredient",
-				"ingredient": {
-				  "tag": "origins:ignore_diet"
+						"tag": "origins:ignore_diet"
+					},
+					"inverted": true
 				},
-				"inverted": true
-			  }
+				{
+					"type": "origins:ingredient",
+					"ingredient": {
+						"tag": "origins:meat"
+					},
+					"inverted": true
+				},
+				{
+					"type": "origins:food"
+				}
 			]
 		},
 		"food_modifier": {
 			"name": "Halved food points",
-			"operation": "multiply_base",
-			"value": -0.5
+			"operation": "multiply_base_multiplicative",
+			"amount": -0.5
 		},
 		"saturation_modifier": {
 			"name": "Halved saturation points",
-			"operation": "multiply_base",
-			"value": -0.5
+			"operation": "multiply_base_multiplicative",
+			"amount": -0.5
 		}
 	},
 	"name": "Preferred Vegetarian",

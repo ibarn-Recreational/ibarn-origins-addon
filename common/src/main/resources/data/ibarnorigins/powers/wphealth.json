@@ -3,19 +3,21 @@
   "max_health": {
     "type": "origins:attribute",
     "modifier": {
+      "id": "*:*",
       "name": "Less Health",
       "attribute": "minecraft:generic.max_health",
-      "operation": "addition",
-      "value": -10
+      "operation": "add_value",
+      "amount": -10
     }
   },
   "max_damage_output": {
     "type": "origins:attribute",
     "modifier": {
+      "id": "*:*",
       "name": "Less Attack Power",
       "attribute": "minecraft:generic.attack_damage",
-      "operation": "multiply_base",
-      "value": -0.5
+      "operation": "ADD_MULTIPLIED_BASE",
+      "amount": -0.5
     }
   },
   "name": "Frailty",

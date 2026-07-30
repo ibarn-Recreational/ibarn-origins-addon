@@ -4,7 +4,7 @@
     "type": "origins:apply_effect",
     "effects": [
       {
-        "effect": "ibarnorigins:inflation_effect",
+        "id": "ibarnorigins:inflation_effect",
         "duration": 160,
         "amplifier": 0,
         "is_ambient": false,
@@ -12,7 +12,7 @@
         "show_icon": true
       },
       {
-        "effect": "minecraft:levitation",
+        "id": "minecraft:levitation",
         "duration": 160,
         "amplifier": 2,
         "is_ambient": false,

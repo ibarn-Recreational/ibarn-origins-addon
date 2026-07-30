@@ -9,7 +9,9 @@
 		"ibarnorigins:soulmage_vegetarian",
 		"ibarnorigins:soulmage_fireweakness"
 	],
-	"icon": "minecraft:soul_lantern",
+	"icon": {
+		"id": "minecraft:soul_lantern"
+	},
 	"order": 2,
 	"impact": 2,
 	"name": "Soul Mage",
