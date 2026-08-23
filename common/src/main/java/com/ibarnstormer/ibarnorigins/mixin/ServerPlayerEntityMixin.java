@@ -16,9 +16,9 @@ public class ServerPlayerEntityMixin {
         if(newPlayer instanceof IbarnOriginsEntity newIOE && oldPlayer instanceof IbarnOriginsEntity oldIOE) {
             newIOE.setSandPerson(oldIOE.isSandPerson());
             newIOE.setSoulMage(oldIOE.isSoulMage());
-            newIOE.setOnSoulMageFire(oldIOE.onSoulMageFire());
-            newIOE.setOnSoulFire(oldIOE.onSoulFire());
-            newIOE.setInflated(oldIOE.inflated());
+            if(!oldPlayer.isDeadOrDying()) newIOE.setOnSoulMageFire(oldIOE.onSoulMageFire());
+            if(!oldPlayer.isDeadOrDying())newIOE.setOnSoulFire(oldIOE.onSoulFire());
+            if(!oldPlayer.isDeadOrDying())newIOE.setInflated(oldIOE.inflated());
             newIOE.setShakingFromFireWeakness(oldIOE.fireWeaknessShaking());
         }
     }

@@ -27,7 +27,5 @@
 		"effects": [
 			"ibarnorigins:soul_fire_effect"
 		]
-	},
-	"name": "Ki Resistance",
-	"description": "You have a strong resistance to magic damage."
+	}
 }

@@ -27,7 +27,6 @@ import net.minecraft.world.phys.Vec3;
 
 public class SoulFireBallEntity extends AbstractHurtingProjectile {
 
-
     public SoulFireBallEntity(Level world) {
         super(IOEntities.SOUL_FIRE_BALL_ENTITY.get(), world);
     }
@@ -35,7 +34,6 @@ public class SoulFireBallEntity extends AbstractHurtingProjectile {
     public SoulFireBallEntity(EntityType<? extends AbstractHurtingProjectile> entityType, Level world) {
         super(entityType, world);
     }
-
 
     public SoulFireBallEntity(double x, double y, double z, double directionX, double directionY, double directionZ, Level world) {
         this(IOEntities.SOUL_FIRE_BALL_ENTITY.get(), world);

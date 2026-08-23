@@ -10,9 +10,9 @@
 		"origins:fragile",
 		"ibarnorigins:ghasterappearance"
 	],
-	"icon": "minecraft:ghast_tear",
+	"icon": {
+		"item": "minecraft:ghast_tear"
+	},
 	"order": 4,
-	"impact": 2,
-	"name": "Ghaster",
-	"description": "Far descendants of the Ghasts who were rescued from the Nether and who became more human due to their prolonged exposure to the Overworld."
+	"impact": 2
 }

@@ -95,7 +95,5 @@
 	  "dimension": "minecraft:overworld",
 	  "biome": "minecraft:desert",
 	  "spawn_strategy": "center"
-	},
-  "name": "One with the Sand",
-  "description": "Take less damage when standing on top of sand blocks but only deal 50% of damage when on anything other than sand. In addition, you will always spawn in a desert."
+	}
 }

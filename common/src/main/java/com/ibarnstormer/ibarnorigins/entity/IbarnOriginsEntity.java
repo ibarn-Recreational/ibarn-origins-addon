@@ -2,8 +2,8 @@ package com.ibarnstormer.ibarnorigins.entity;
 
 public interface IbarnOriginsEntity {
 
-    void setSpellCastTicks(int i);
-    int getSpellCastTicks();
+    void setSoulFireballChargeTicks(int i);
+    int getSoulFireballChargeTicks();
 
     boolean onSoulMageFire();
     void setOnSoulMageFire(boolean b);
