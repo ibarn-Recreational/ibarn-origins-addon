@@ -6,7 +6,7 @@
 		"ibarnorigins:sandman_shovel_damage"
 	],
 	"icon": {
-		"id": "minecraft:sand"
+		"item": "minecraft:sand"
 	},
 	"order": 2,
 	"impact": 2,

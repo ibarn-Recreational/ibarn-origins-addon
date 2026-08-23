@@ -9,10 +9,9 @@
 	"sand_hunger": {
 		"type": "origins:conditioned_attribute",
 		"modifier": {
-			"id": "*:*",
 			"attribute": "minecraft:generic.attack_damage",
-			"operation": "ADD_MULTIPLIED_BASE",
-			"amount": -0.5,
+			"operation": "multiply_base",
+			"value": -0.5,
 			"name": "Hunger for Sand"
 		},
 		"tick_rate": 20,
@@ -54,7 +53,7 @@
 		"type": "origins:particle",
 		"particle": {
 			"type": "minecraft:falling_dust",
-			"params": "{block_state:\"minecraft:sand\"}"
+			"params": "minecraft:sand"
 		},
 		"frequency": 4,
 		"condition": {

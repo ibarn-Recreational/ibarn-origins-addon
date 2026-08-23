@@ -1,14 +1,10 @@
 package com.ibarnstormer.ibarnorigins.registry;
 
 import com.ibarnstormer.ibarnorigins.IbarnOriginsMain;
-import com.ibarnstormer.ibarnorigins.registry.utils.IORegisterWrapper;
-import com.ibarnstormer.ibarnorigins.registry.utils.RegistryObjectWrapper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 

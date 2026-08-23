@@ -3,7 +3,7 @@
   "entity_action": {
     "type": "origins:apply_effect",
     "effect": {
-      "id": "minecraft:wither",
+      "effect": "minecraft:wither",
       "amplifier": 1,
       "duration": 100
     }

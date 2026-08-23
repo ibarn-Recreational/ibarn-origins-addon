@@ -3,36 +3,43 @@
 	"meat_saturation_modifier": {
 		"type": "origins:modify_food",
 		"item_condition": {
-			"type": "origins:all_of",
+			"type": "origins:and",
 			"conditions": [
-				{
+			  {
+				"type": "origins:or",
+				"conditions": [
+				  {
 					"type": "origins:ingredient",
 					"ingredient": {
-						"tag": "origins:ignore_diet"
-					},
-					"inverted": true
+					  "tag": "origins:meat"
+					}
+				  },
+				  {
+					"type": "origins:meat"
+				  }
+				]
+			  },
+			  {
+				"type": "origins:food"
+			  },
+			  {
+				"type": "origins:ingredient",
+				"ingredient": {
+				  "tag": "origins:ignore_diet"
 				},
-				{
-					"type": "origins:ingredient",
-					"ingredient": {
-						"tag": "origins:meat"
-					},
-					"inverted": true
-				},
-				{
-					"type": "origins:food"
-				}
+				"inverted": true
+			  }
 			]
 		},
 		"food_modifier": {
 			"name": "Halved food points",
-			"operation": "multiply_base_multiplicative",
-			"amount": -0.5
+			"operation": "multiply_base",
+			"value": -0.5
 		},
 		"saturation_modifier": {
 			"name": "Halved saturation points",
-			"operation": "multiply_base_multiplicative",
-			"amount": -0.5
+			"operation": "multiply_base",
+			"value": -0.5
 		}
 	}
 }

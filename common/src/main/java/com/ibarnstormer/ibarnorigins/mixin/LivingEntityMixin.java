@@ -239,15 +239,6 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
             }
         }
 
-        // Remove visual flags for effects
-        if(!this.hasEffect(IOEffects.INFLATION.getRef())) {
-            this.setInflated(false);
-        }
-
-        if(!this.hasEffect(IOEffects.SOUL_FIRE.getRef())) {
-            this.setOnSoulMageFire(false);
-        }
-
         // Inflation effect
         if(this.hasEffect(IOEffects.INFLATION.getRef()) && this.isShiftKeyDown()) {
             this.push(this.getLookAngle().x * 0.035, -0.06, this.getLookAngle().z * 0.035);
