@@ -19,13 +19,13 @@
     "requireAnnotations": true
   },
   "client": [
+    "AvatarRendererMixin",
     "BatchingRenderCommandQueueMixin",
-    "BipedEntityModelMixin",
     "EntityRendererMixin",
     "FlameFeatureRenderer$SubmitMixin",
     "FlameFeatureRendererMixin",
-    "ScreenEffectRendererMixin",
     "LayerDefinitionsMixin",
-    "LivingEntityRendererMixin"
+    "LivingEntityRendererMixin",
+    "ScreenEffectRendererMixin"
   ]
 }

@@ -38,7 +38,5 @@
       "operation": "multiply_total",
       "value": -0.25
     }
-  },
-  "name": "Weak Physique",
-  "description": "Although you became more adapted to the Overworld, you are physically weak, mine stone slightly slower, deal 25% less melee damage, and can become exhausted quickly."
+  }
 }

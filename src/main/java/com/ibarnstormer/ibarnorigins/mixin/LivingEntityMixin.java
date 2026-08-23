@@ -3,7 +3,6 @@ package com.ibarnstormer.ibarnorigins.mixin;
 import com.ibarnstormer.ibarnorigins.IbarnOriginsMain;
 import com.ibarnstormer.ibarnorigins.effect.IExtendedStatusEffect;
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
-import com.ibarnstormer.ibarnorigins.entity.SoulFireBallEntity;
 import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import com.ibarnstormer.ibarnorigins.registry.IOParticles;
 import com.ibarnstormer.ibarnorigins.utils.IOUtils;
@@ -15,7 +14,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -58,8 +56,6 @@ import net.minecraft.world.phys.Vec3;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEntity {
 
-    @Shadow public abstract float getVisualRotationYInDegrees();
-    @Shadow public abstract void setYBodyRot(float bodyYaw);
     @Shadow public abstract float getYHeadRot();
     @Shadow public abstract boolean addEffect(MobEffectInstance effect);
     @Shadow public abstract boolean isInWall();
@@ -73,6 +69,9 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
     @Shadow
     public abstract @Nullable LivingEntity asLivingEntity();
 
+    @Shadow
+    public abstract float getScale();
+
     @Unique
     private MobEffectInstance soulBurning = null;
 
@@ -80,7 +79,7 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
     private final Identifier soulSpeedID = IbarnOriginsMain.IOIdentifier("soul_speed");
 
     @Unique
-    private static final EntityDataAccessor<Integer> SPELL_CASTING_TICKS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Integer> SOUL_FIREBALL_CHARGE_TICKS = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.INT);
     @Unique
     private static final EntityDataAccessor<Boolean> IS_SOUL_MAGE = SynchedEntityData.defineId(LivingEntity.class, EntityDataSerializers.BOOLEAN);
     @Unique
@@ -100,13 +99,13 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
     }
 
     @Unique
-    public void setSpellCastTicks(int i) {
-        this.entityData.set(SPELL_CASTING_TICKS, i);
+    public void setSoulFireballChargeTicks(int i) {
+        this.entityData.set(SOUL_FIREBALL_CHARGE_TICKS, i);
     }
 
     @Unique
-    public int getSpellCastTicks() {
-        return this.entityData.get(SPELL_CASTING_TICKS);
+    public int getSoulFireballChargeTicks() {
+        return this.entityData.get(SOUL_FIREBALL_CHARGE_TICKS);
     }
 
     @Unique
@@ -184,7 +183,7 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
     private void livingEntity$initDataTracker(SynchedEntityData.Builder builder, CallbackInfo ci) {
-        builder.define(SPELL_CASTING_TICKS, 0);
+        builder.define(SOUL_FIREBALL_CHARGE_TICKS, 0);
         builder.define(IS_SOUL_MAGE, false);
         builder.define(IS_SAND_PERSON, false);
         builder.define(IS_ON_SOUL_MAGE_FIRE, false);
@@ -195,7 +194,7 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
     private void livingEntity$writeCustomData(ValueOutput view, CallbackInfo ci) {
-        view.putInt("spellCastTicks", this.entityData.get(SPELL_CASTING_TICKS));
+        view.putInt("soulFireballChargeTicks", this.entityData.get(SOUL_FIREBALL_CHARGE_TICKS));
         view.putBoolean("isSoulMage", this.entityData.get(IS_SOUL_MAGE));
         view.putBoolean("isSandPerson", this.entityData.get(IS_SAND_PERSON));
         view.putBoolean("onSoulMageFire", this.entityData.get(IS_ON_SOUL_MAGE_FIRE));
@@ -206,7 +205,7 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
     private void livingEntity$readCustomData(ValueInput view, CallbackInfo ci) {
-        this.entityData.set(SPELL_CASTING_TICKS, view.getIntOr("spellCastTicks", 0));
+        this.entityData.set(SOUL_FIREBALL_CHARGE_TICKS, view.getIntOr("soulFireballChargeTicks", 0));
         this.entityData.set(IS_SOUL_MAGE, view.getBooleanOr("isSoulMage", false));
         this.entityData.set(IS_SAND_PERSON, view.getBooleanOr("isSandPerson", false));
         this.entityData.set(IS_ON_SOUL_MAGE_FIRE, view.getBooleanOr("onSoulMageFire", false));
@@ -217,34 +216,27 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void livingEntity$tick(CallbackInfo ci) {
-        int spellCastTicks = this.getSpellCastTicks();
+        int spellCastTicks = this.getSoulFireballChargeTicks();
 
         if(spellCastTicks > 0) {
-            this.setSpellCastTicks(spellCastTicks - 1);
-            this.setYBodyRot(this.getYHeadRot());
+            this.setSoulFireballChargeTicks(spellCastTicks - 1);
 
             if(this.level().isClientSide()) {
 
-                float g = this.getVisualRotationYInDegrees() * 0.017453292F + Mth.cos((float)this.tickCount * 0.6662F) * 0.25F;
-                float h = Mth.cos(g);
-                float i = Mth.sin(g);
+                float yRot = (float) (this.getYHeadRot() * (Math.PI / 180) + (Math.PI / 2) + Mth.cos((float)this.tickCount * 0.6662F) * 0.25F);
+                float x = Mth.cos(yRot);
+                float z = Mth.sin(yRot);
+
+                float xRot = (float) (this.getXRot() * (Math.PI / 180) * -1);
 
                 int xDelta = this.level().getRandom().nextIntBetweenInclusive(-1, 1);
                 int yDelta = this.level().getRandom().nextIntBetweenInclusive(-1, 1);
                 int zDelta = this.level().getRandom().nextIntBetweenInclusive(-1, 1);
 
-                this.level().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() + (double)h * 0.6, this.getY() + this.getBoundingBox().getYsize() + 0.2, this.getZ() + (double)i * 0.6, 0.025 * xDelta, 0.01 * yDelta, 0.02 * zDelta);
-                this.level().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() - (double)h * 0.6, this.getY() + this.getBoundingBox().getYsize() + 0.2, this.getZ() - (double)i * 0.6, 0.025 * xDelta, 0.01 * yDelta, 0.02 * zDelta);
+                double d0 = 0.75 * (double) this.getScale();
+
+                this.level().addParticle(IOParticles.SOUL_MAGE_FLAME.get(), this.getX() + d0 * x, this.getY() + this.getBoundingBox().getYsize() / 1.5 + d0 * xRot, this.getZ() + d0 * z, 0.02 * xDelta, 0.02 * yDelta, 0.02 * zDelta);
             }
-        }
-
-        // Remove visual flags for effects
-        if(!this.hasEffect(IOEffects.INFLATION.getRef())) {
-            this.setInflated(false);
-        }
-
-        if(!this.hasEffect(IOEffects.SOUL_FIRE.getRef())) {
-            this.setOnSoulMageFire(false);
         }
 
         // Inflation effect

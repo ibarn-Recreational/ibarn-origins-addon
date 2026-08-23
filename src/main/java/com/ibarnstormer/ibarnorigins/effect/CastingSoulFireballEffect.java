@@ -8,6 +8,7 @@ import com.ibarnstormer.ibarnorigins.registry.IOSounds;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
@@ -31,7 +32,7 @@ public class CastingSoulFireballEffect extends MobEffect implements IExtendedSta
             serverWorld.playSound(null, entity.getX(), entity.getY(), entity.getZ(), IOSounds.KI_BLAST_CHARGE.get(), SoundSource.PLAYERS, 1.25f, 1);
         }
 
-        if(entity instanceof IbarnOriginsEntity spellCaster && entity.hasEffect(IOEffects.CASTING_SOUL_FIREBALL.getRef())) spellCaster.setSpellCastTicks(entity.getEffect(IOEffects.CASTING_SOUL_FIREBALL.getRef()).getDuration());
+        if(entity instanceof IbarnOriginsEntity spellCaster && entity.hasEffect(IOEffects.CASTING_SOUL_FIREBALL.getRef())) spellCaster.setSoulFireballChargeTicks(entity.getEffect(IOEffects.CASTING_SOUL_FIREBALL.getRef()).getDuration());
 
         AttributeInstance movement = entity.getAttribute(Attributes.MOVEMENT_SPEED);
         if(movement != null && !movement.hasModifier(ID))  movement.addTransientModifier(MOVEMENT_MODIFIER);
@@ -45,7 +46,16 @@ public class CastingSoulFireballEffect extends MobEffect implements IExtendedSta
         world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), IOSounds.KI_BLAST_FIRE.get(), SoundSource.PLAYERS, 1.25f, 1);
 
         SoulFireBallEntity fireball = new SoulFireBallEntity(entity, entity.getLookAngle(), entity.level());
-        fireball.setPosRaw(entity.getX(), entity.getEyeY(), entity.getZ());
+
+        float yRot = (float) (entity.getYHeadRot() * (Math.PI / 180) + (Math.PI / 2) + Mth.cos((float)entity.tickCount * 0.6662F) * 0.25F);
+        float x = Mth.cos(yRot);
+        float z = Mth.sin(yRot);
+
+        float xRot = (float) (entity.getXRot() * (Math.PI / 180) * -1);
+
+        double d0 = 0.75 * (double) entity.getScale();
+
+        fireball.setPosRaw(entity.getX() + d0 * x, (entity.getY() + entity.getBoundingBox().getYsize() / 1.5) + d0 * xRot, entity.getZ() + d0 * z);
 
         world.addFreshEntity(fireball);
 

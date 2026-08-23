@@ -1,5 +1,3 @@
 {
-  "type": "origins:simple",
-  "name": "Soul Speed",
-  "description": "The soul energy in soul sand and soul soil allows you to travel faster."
+  "type": "origins:simple"
 }

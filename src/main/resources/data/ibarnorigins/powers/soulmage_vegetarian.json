@@ -41,7 +41,5 @@
 			"operation": "multiply_base",
 			"value": -0.5
 		}
-	},
-	"name": "Preferred Vegetarian",
-	"description": "Meat does not have as much soul energy as vegetables do. Hereby meat does not sustain for much but vegetables grant experience upon consumption based on how filling they are."
+	}
 }

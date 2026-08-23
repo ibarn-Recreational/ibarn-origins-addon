@@ -5,7 +5,9 @@
 		"ibarnorigins:sandman_sandbury",
 		"ibarnorigins:sandman_shovel_damage"
 	],
-	"icon": "minecraft:sand",
+	"icon": {
+		"item": "minecraft:sand"
+	},
 	"order": 2,
 	"impact": 2,
 	"name": "Sand Person",

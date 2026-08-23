@@ -8,12 +8,10 @@
   },
   "entity_type":"ibarnorigins:homing_wither_skull",
   "tag": "{ignoresOwnerRelativeMovement:1b}",
-  "count":1,
+  "count": 1,
   "speed": 0.1,
   "key": {
     "key": "key.origins.primary_active",
     "continuous": false
-  },
-  "name": "Homing Wither Skull",
-  "description": "Channel the forces of the undead and fire wither skulls that seek out your foes."
+  }
 }

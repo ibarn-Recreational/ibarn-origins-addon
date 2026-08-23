@@ -6,7 +6,6 @@ import com.ibarnstormer.ibarnorigins.client.render.entity.state.SoulMageFireRend
 import com.ibarnstormer.ibarnorigins.client.render.entity.state.SoulMageSpellCastState;
 import com.ibarnstormer.ibarnorigins.entity.IbarnOriginsEntity;
 import com.ibarnstormer.ibarnorigins.entity.SoulFireBallEntity;
-import com.ibarnstormer.ibarnorigins.registry.IOEffects;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.BlockPos;
@@ -37,7 +36,7 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
         soulFireRenderState.renderSoulFire = entity instanceof IbarnOriginsEntity ioe && ioe.onSoulFire();
         soulMageFireRenderState.renderSoulMageFire = (entity instanceof IbarnOriginsEntity ioe && ioe.onSoulMageFire()) || entity instanceof SoulFireBallEntity;
         inflationRenderState.renderInflated = entity instanceof IbarnOriginsEntity ioe && ioe.inflated();
-        soulMageSpellCastState.renderSpellCast = entity instanceof IbarnOriginsEntity ioe && ioe.getSpellCastTicks() > 0;
+        soulMageSpellCastState.renderSpellCast = entity instanceof IbarnOriginsEntity ioe && ioe.getSoulFireballChargeTicks() > 0;
 
         state.setData(SoulMageFireRenderState.KEY, soulMageFireRenderState);
         state.setData(SoulMageSpellCastState.KEY, soulMageSpellCastState);
