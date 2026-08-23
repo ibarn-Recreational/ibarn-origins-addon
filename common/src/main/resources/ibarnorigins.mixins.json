@@ -19,8 +19,8 @@
   "client": [
     "EntityRendererDispatcherMixin",
     "EntityRendererMixin",
-    "HumanoidModelMixin",
     "LivingEntityRendererMixin",
+    "PlayerRendererMixin",
     "ScreenEffectRendererMixin"
   ],
   "server": [],

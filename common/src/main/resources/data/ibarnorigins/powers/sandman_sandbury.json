@@ -16,7 +16,5 @@
                 "type": "origins:on_block"
             }
         ]
-    },
-  "name": "Sand Burrowing",
-  "description": "You are able to burrow yourself into the sand."
+    }
 }

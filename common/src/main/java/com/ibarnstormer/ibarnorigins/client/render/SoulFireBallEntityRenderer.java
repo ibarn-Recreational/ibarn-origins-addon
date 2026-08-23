@@ -32,7 +32,6 @@ public class SoulFireBallEntityRenderer extends EntityRenderer<SoulFireBallEntit
         matrixStack.pushPose();
         matrixStack.scale(0.75F, 0.75F, 0.75F);
         matrixStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        matrixStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         PoseStack.Pose entry = matrixStack.last();
         Matrix4f matrix4f = entry.pose();
         Matrix3f matrix3f = entry.normal();

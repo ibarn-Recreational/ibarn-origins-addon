@@ -37,7 +37,5 @@
 				}
 			]
 		}
-	},
-	"name": "Soul Fire Strength",
-	"description": "Deal an additional 50% amount of damage while standing near soul fire sources or holding their respective items. Moreover, standing directly inside soul fire will boost melee attacks to 100% additional damage and 50% additional soul fire ball damage."
+	}
 }

@@ -33,7 +33,5 @@
   },
   "condition": {
     "type": "origins:sneaking"
-  },
-  "name": "Inflation",
-  "description": "Jumping while sneaking will cause you to inflate and float up for a short period of time."
+  }
 }

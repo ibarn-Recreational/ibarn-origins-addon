@@ -19,7 +19,5 @@
 		"type": "origins:armor_value",
 		"comparison": ">",
 		"compare_to": 2
-	},
-  "name": "Limited Armor",
-  "description": "You are unable to wear any armor higher than iron armor."
+	}
 }

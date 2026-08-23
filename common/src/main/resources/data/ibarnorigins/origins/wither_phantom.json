@@ -18,7 +18,5 @@
 		"id": "minecraft:wither_skeleton_skull"
 	},
 	"order": 5,
-	"impact": 3,
-	"name": "Wither Wraith",
-	"description": "Ancient half-living half-undead amalgamates who became permanently infused with withering powers as a result of fusions with wither cores."
+	"impact": 3
 }

@@ -20,7 +20,5 @@
   "key": {
     "key": "key.origins.primary_active",
     "continuous": false
-  },
-  "name": "Soul Fire Ball",
-  "description": "Conjure a special soul-burning fire ball that increases in power as your experience level rises (maxing out at level 100)."
+  }
 }

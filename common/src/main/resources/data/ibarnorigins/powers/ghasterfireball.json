@@ -13,7 +13,5 @@
   "key": {
     "key": "key.origins.primary_active",
     "continuous": false
-  },
-  "name": "Fireball Instantiation",
-  "description": "Though you were left exposed to the Overworld, you have retained the vital fireballing ability of your ancestors, to a certain extent at least."
+  }
 }

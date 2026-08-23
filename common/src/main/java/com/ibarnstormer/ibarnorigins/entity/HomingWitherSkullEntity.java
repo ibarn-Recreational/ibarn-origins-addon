@@ -14,6 +14,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.TraceableEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -142,8 +144,15 @@ public class HomingWitherSkullEntity extends AbstractHurtingProjectile {
             Entity entity = result.getEntity();
             boolean flag;
             if (this.getOwner() instanceof LivingEntity livingentity) {
+
+                float attackDamageScaler = 1;
+                AttributeInstance damageAttribute = livingentity.getAttribute(Attributes.ATTACK_DAMAGE);
+                if (damageAttribute != null) {
+                    attackDamageScaler = (float) damageAttribute.getValue();
+                }
+
                 DamageSource damagesource = this.damageSources().witherSkull(null, livingentity);
-                flag = entity.hurt(damagesource, 8.0F);
+                flag = entity.hurt(damagesource, 8.0F + attackDamageScaler);
                 if (flag) {
                     if (entity.isAlive()) {
                         EnchantmentHelper.doPostAttackEffects(serverLevel, entity, damagesource);
