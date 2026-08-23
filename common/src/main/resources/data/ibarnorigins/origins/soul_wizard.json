@@ -10,7 +10,7 @@
 		"ibarnorigins:soulmage_fireweakness"
 	],
 	"icon": {
-		"item": "minecraft:soul_lantern"
+		"id": "minecraft:soul_lantern"
 	},
 	"order": 2,
 	"impact": 2

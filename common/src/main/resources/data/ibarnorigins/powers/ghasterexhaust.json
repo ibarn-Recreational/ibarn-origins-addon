@@ -3,17 +3,15 @@
   "exhaustion": {
     "type": "origins:modify_exhaustion",
     "modifier": {
-      "name": "Increased exhaustion",
-      "operation": "multiply_base",
-      "value": 1.2
+      "operation": "multiply_base_multiplicative",
+      "amount": 0.2
     }
   },
   "weak_arms": {
     "type": "origins:modify_break_speed",
     "modifier": {
-      "name": "Unbreakable natural stone",
-      "value": -0.5,
-      "operation": "multiply_total"
+      "amount": -0.5,
+      "operation": "multiply_base_multiplicative"
     },
     "block_condition": {
       "type": "origins:and",
@@ -34,9 +32,10 @@
   "weak_melee": {
     "type": "origins:attribute",
     "modifier": {
+      "id": "*:*",
       "attribute": "minecraft:generic.attack_damage",
-      "operation": "multiply_total",
-      "value": -0.25
+      "operation": "ADD_MULTIPLIED_BASE",
+      "amount": -0.25
     }
   }
 }

@@ -14,7 +14,9 @@
 		}
 	},
 	"modifier": {
-		"operation": "multiply_total",
-		"value": 1.5
-	}
+		"operation": "multiply_base_multiplicative",
+		"amount": 1.5
+	},
+  "name": "Shovel Vulnerability",
+  "description": "Take 150% more damage from shovels."
 }

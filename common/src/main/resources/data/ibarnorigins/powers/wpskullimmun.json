@@ -2,7 +2,7 @@
     "type": "origins:invulnerability",
     "damage_condition": {
       "type": "origins:name",
-      "name": "witherSkull"
+      "name": "wither_skull"
     },
     "hidden": true
 }

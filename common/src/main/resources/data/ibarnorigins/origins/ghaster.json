@@ -11,7 +11,7 @@
 		"ibarnorigins:ghasterappearance"
 	],
 	"icon": {
-		"item": "minecraft:ghast_tear"
+		"id": "minecraft:ghast_tear"
 	},
 	"order": 4,
 	"impact": 2
