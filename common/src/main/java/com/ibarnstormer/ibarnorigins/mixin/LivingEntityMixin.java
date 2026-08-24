@@ -223,11 +223,11 @@ public abstract class LivingEntityMixin extends Entity implements IbarnOriginsEn
 
             if(this.level().isClientSide()) {
 
-                float yRot = (float) (this.getYHeadRot() * (Math.PI / 180) + (Math.PI / 2) + Mth.cos((float)this.tickCount * 0.6662F) * 0.25F);
-                float x = Mth.cos(yRot);
-                float z = Mth.sin(yRot);
-
+                float yRot = (float) (this.getYHeadRot() * (Math.PI / 180) + (Math.PI / 2));
                 float xRot = (float) (this.getXRot() * (Math.PI / 180) * -1);
+
+                float x = Mth.cos(yRot) * Mth.cos(xRot);
+                float z = Mth.sin(yRot) * Mth.cos(xRot);
 
                 int xDelta = this.level().getRandom().nextIntBetweenInclusive(-1, 1);
                 int yDelta = this.level().getRandom().nextIntBetweenInclusive(-1, 1);
